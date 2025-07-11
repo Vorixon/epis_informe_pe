@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Buscador de Carga Académica</title>
+    <style>
+        :root {
+            --primary-color: #0078d4; --success-color: #107c10; --warning-color: #ffb900;
+            --danger-color: #d83b01; --secondary-color: #605e5c; --light-gray: #f3f2f1;
+            --border-radius: 8px; --font-family: "Segoe UI", -apple-system, BlinkMacSystemFont, Roboto, "Helvetica Neue", sans-serif;
+        }
+        body { font-family: var(--font-family); background-color: var(--light-gray); color: #333; margin: 0; padding: 20px; }
+        .spinner { width: 40px; height: 40px; border: 4px solid rgba(0,0,0,0.1); border-top: 4px solid var(--primary-color); border-radius: 50%; animation: spin 1s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 9999; display: none; justify-content: center; align-items: center; background-color: rgba(0, 0, 0, 0.4); backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px); }
+        .modal-content { background: white; padding: 30px; border-radius: var(--border-radius); width: 95%; box-shadow: 0 8px 32px rgba(0,0,0,0.2); position: relative; }
+        
+        #semesterModal { display: flex; }
+        #semesterModal .modal-content { max-width: 400px; text-align: center; }
+        #semesterModal h2 { margin-top: 0; color: var(--primary-color);}
+        #semesterModal select, #semesterModal button { font-size: 1.1em; padding: 12px; border-radius: var(--border-radius); margin-top: 15px; width: 100%; border: 1px solid #ccc; }
+        #semesterModal button { background-color: var(--primary-color); color: white; border: none; cursor: pointer; transition: background-color 0.2s; }
+        
+        #app-container { display: none; }
+        .container { max-width: 1200px; margin: 0 auto; background: white; padding: 30px; border-radius: var(--border-radius); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        h1 { text-align: center; color: var(--primary-color); margin-bottom: 10px; }
+        #semester-display { text-align: center; font-size: 1.3em; font-weight: 600; color: var(--secondary-color); margin-bottom: 25px; background: #e9f5ff; padding: 10px; border-radius: var(--border-radius); border: 1px solid #cce5ff; }
+
+        .search-container { position: relative; }
+        .search-form { display: flex; gap: 10px; }
+        .search-input-wrapper { position:relative; flex-grow:1; }
+        #teacherInput { width: 100%; box-sizing: border-box; padding: 12px; border: 1px solid #ccc; border-radius: var(--border-radius); font-size: 16px; }
+        #searchButton { padding: 12px 20px; font-size: 16px; font-weight: 600; cursor: pointer; border-radius: var(--border-radius); border: none; color: white; background-color: var(--primary-color); }
+        .suggestions-container { display: none; position: absolute; background-color: white; border: 1px solid #ccc; top: 100%; left:0; right:0; z-index: 1000; max-height: 240px; overflow-y: auto; box-shadow: 0 4px 8px rgba(0,0,0,0.1); border-radius: 0 0 var(--border-radius) var(--border-radius); }
+        .suggestion-item { padding: 12px 15px; cursor: pointer; font-size: 16px; }
+        .suggestion-item:hover { background-color: var(--light-gray); }
+        
+        #search-loader { display: none; align-items: center; justify-content: center; flex-direction: column; gap: 15px; padding: 20px; }
+        #results-container { margin-top: 30px; }
+        #teacher-details { background: var(--light-gray); padding: 20px; border-radius: var(--border-radius); border: 1px solid #eee; margin-bottom: 30px; }
+        
+        #courses-results { display: grid; grid-template-columns: repeat(auto-fill, minmax(400px, 1fr)); gap: 20px; }
+        .course-card { border: none; border-radius: var(--border-radius); padding: 20px; background-color: #fff; display: flex; flex-direction: column; box-shadow: 0 4px 15px rgba(0,0,0,0.08); transition: all 0.3s ease-in-out; }
+        .course-card:hover { transform: translateY(-4px); box-shadow: 0 8px 25px rgba(0,0,0,0.1); }
+        .course-card h3 { margin: 0 0 10px 0; font-size: 1.1em; color: var(--primary-color); }
+        .course-card .details-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; border-top: 1px solid var(--light-gray); margin-top: 15px; padding-top: 15px; }
+        .course-card .detail-item { font-size: 0.9em; }
+        .course-card .card-buttons { display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px; border-top: 1px solid var(--light-gray); padding-top: 15px; }
+        .btn { border: none; padding: 8px 15px; border-radius: var(--border-radius); cursor: pointer; font-weight: 600; color: white; transition: all 0.2s; text-decoration: none; display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
+        .btn-action { background-color: var(--warning-color); color: #333; }
+        .btn-done { background-color: var(--success-color); }
+        .btn:hover:not(:disabled) { opacity: 0.85; }
+
+        #reportModal .modal-content { max-width: 950px; max-height: 90vh; overflow-y: auto; }
+        .modal-close { position: absolute; top: 15px; right: 20px; font-size: 28px; cursor: pointer; color: #888; }
+        #reportModal .top-form-group { display: flex; flex-wrap: wrap; gap: 15px 30px; align-items: center; margin-bottom: 20px; }
+        #reportModal .top-form-group label { font-weight: 600; }
+        #reportModal .top-form-group input { padding: 8px; border-radius: var(--border-radius); border: 1px solid #ccc; width: 120px; }
+        
+        .skills-header { display: grid; grid-template-columns: 2.5fr 1fr 0.8fr 1fr 0.8fr 1fr 0.8fr 1fr 50px; gap: 10px; font-weight: 600; margin-top: 20px; padding-bottom: 5px; border-bottom: 2px solid #ccc; font-size: 0.85em; text-align: center; }
+        .skill-row { display: grid; grid-template-columns: 2.5fr 1fr 0.8fr 1fr 0.8fr 1fr 0.8fr 1fr 50px; gap: 10px; align-items: center; margin-top: 10px; }
+        .skill-row span { font-weight: bold; text-align: center; padding: 5px; border-radius: 4px; }
+        .skill-row input { text-align: center; padding: 8px; border-radius: var(--border-radius); border: 1px solid #ccc;}
+        .skill-row .level-input { width: 80px; }
+        input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+        input[type=number] { -moz-appearance: textfield; }
+        .skill-row .input-error { border: 2px solid var(--danger-color) !important; }
+        #validation-message { color: var(--danger-color); font-weight: 600; margin-top: 10px; text-align: center; height: 20px; }
+        .modal-footer { display: flex; justify-content: space-between; align-items: center; margin-top: 25px; border-top: 1px solid #eee; padding-top: 15px; min-height: 40px; }
+        .btn-add-skill, .btn-remove-skill { border-radius: var(--border-radius); border: none; cursor: pointer; color: white; padding: 10px; }
+        .btn-add-skill { background-color: var(--primary-color); }
+        .btn-remove-skill { background-color: var(--danger-color); padding: 5px 10px;}
+        .btn-save-report { background-color: var(--success-color); }
+        .btn-save-report:disabled { background-color: #aaa; cursor: not-allowed; }
+        #final-response a { color: var(--primary-color); text-decoration: none; font-weight: bold; }
+
+        @media (max-width: 768px) {
+            .skills-header, .skill-row { font-size: 0.75em; gap: 5px; }
+        }
+    </style>
+</head>
+<body>
+    <div id="semesterModal" class="modal-overlay">
+        <div class="modal-content">
+            <h2>Seleccione el Semestre</h2>
+            <select id="semesterSelector">
+                <option value="2025-1">2025-1</option>
+                <option value="2025-2">2025-2</option>
+            </select>
+            <button id="loadSemesterBtn">Cargar Datos</button>
+            <div id="semesterLoader" style="display: none; margin-top: 15px;"><div class="spinner" style="margin:auto;"></div></div>
+        </div>
+    </div>
+
+    <div id="app-container">
+        <div class="container">
+            <h1>Buscador de Carga Académica</h1>
+            <div id="semester-display"></div>
+            <div class="search-container">
+                <div class="search-form">
+                    <div class="search-input-wrapper">
+                        <input type="text" id="teacherInput" placeholder="Escribe el nombre del docente..." autocomplete="off" required>
+                        <div id="suggestions" class="suggestions-container"></div>
+                    </div>
+                    <button type="button" id="searchButton">Buscar</button>
+                </div>
+            </div>
+            <div id="search-loader"></div>
+            <div id="results-container">
+                <div id="teacher-details"></div>
+                <div id="courses-results"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="reportModal" class="modal-overlay">
+        <div class="modal-content">
+            <span class="modal-close">×</span>
+            <div class="modal-header"><h2 id="modalTitle"></h2></div>
+            <div class="modal-body">
+                <div class="top-form-group">
+                    <label>Matriculados:</label><input type="number" id="matriculados" min="0">
+                    <label>Evaluados:</label><input type="number" id="evaluados" min="0">
+                </div><hr>
+                <div class="skills-header">
+                    <div>Conocimiento o Habilidad</div><div>Deficiente (0-10)</div><div>%</div>
+                    <div>Suficiente (11-15)</div><div>%</div><div>Bueno (16-20)</div>
+                    <div>%</div><div>Total %</div><div></div>
+                </div>
+                <div id="skills-container"></div>
+                <div id="validation-message"></div>
+            </div>
+            <div class="modal-footer">
+                <button id="addSkillBtn" class="btn btn-add-skill">Agregar Conocimiento</button>
+                <div id="final-response"></div>
+                <button id="saveReportBtn" class="btn btn-save-report">Generar Informe</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzkdGFdDby7qzPEtDURTevFRH-ZxmCKqXkD3S9W6oQsU8q6BCqS1068vbScRFmfR_BI/exec";
+        
+        const semesterModal = document.getElementById('semesterModal');
+        const semesterSelector = document.getElementById('semesterSelector');
+        const loadSemesterBtn = document.getElementById('loadSemesterBtn');
+        const semesterLoader = document.getElementById('semesterLoader');
+        const appContainer = document.getElementById('app-container');
+        const semesterDisplay = document.getElementById('semester-display');
+        const teacherInput = document.getElementById('teacherInput');
+        const searchButton = document.getElementById('searchButton');
+        const suggestionsDiv = document.getElementById('suggestions');
+        const searchLoader = document.getElementById('search-loader');
+        const teacherDetailsDiv = document.getElementById('teacher-details');
+        const coursesResultsDiv = document.getElementById('courses-results');
+        const reportModal = document.getElementById('reportModal');
+        const modalCloseBtn = reportModal.querySelector('.modal-close');
+        const addSkillBtn = document.getElementById('addSkillBtn');
+        const skillsContainer = document.getElementById('skills-container');
+        const matriculadosInput = document.getElementById('matriculados');
+        const evaluadosInput = document.getElementById('evaluados');
+        const validationMsg = document.getElementById('validation-message');
+        const saveReportBtn = document.getElementById('saveReportBtn');
+        const finalResponseDiv = document.getElementById('final-response');
+        
+        let allTeachers = [];
+        let currentCourseData = {};
+        let currentTeacherData = {};
+        let selectedSemester = '';
+        let existingReportsMap = {};
+
+        loadSemesterBtn.addEventListener('click', async () => {
+            selectedSemester = semesterSelector.value;
+            semesterLoader.style.display = 'block';
+            loadSemesterBtn.disabled = true;
+            try {
+                const response = await fetch(`${WEB_APP_URL}?action=getInitialData&semestre=${selectedSemester}`);
+                if (!response.ok) throw new Error(`Error en la red.`);
+                const result = await response.json();
+                if (result.success) {
+                    allTeachers = result.data.teachers;
+                    semesterDisplay.textContent = `Semestre de Trabajo: ${selectedSemester}`;
+                    semesterModal.style.display = 'none';
+                    appContainer.style.display = 'block';
+                } else { throw new Error(result.message); }
+            } catch (error) {
+                Swal.fire({ icon: 'error', title: 'Error al Cargar', text: error.message });
+                semesterLoader.style.display = 'none';
+                loadSemesterBtn.disabled = false;
+            }
+        });
+
+        teacherInput.addEventListener('input', () => {
+            teacherDetailsDiv.innerHTML = ''; coursesResultsDiv.innerHTML = '';
+            const inputText = teacherInput.value.toLowerCase();
+            if (inputText.length === 0) { suggestionsDiv.style.display = 'none'; return; }
+            const filteredTeachers = allTeachers.filter(teacher => teacher.toLowerCase().includes(inputText));
+            displaySuggestions(filteredTeachers);
+        });
+
+        function displaySuggestions(teachers) {
+            suggestionsDiv.innerHTML = '';
+            if (teachers.length === 0) { suggestionsDiv.style.display = 'none'; return; }
+            teachers.forEach(teacher => {
+                const item = document.createElement('div');
+                item.className = 'suggestion-item';
+                item.textContent = teacher;
+                item.addEventListener('click', () => { teacherInput.value = teacher; suggestionsDiv.style.display = 'none'; performSearch(teacher); });
+                suggestionsDiv.appendChild(item);
+            });
+            suggestionsDiv.style.display = 'block';
+        }
+        
+        document.addEventListener('click', (e) => { if (!e.target.closest('.search-input-wrapper')) { suggestionsDiv.style.display = 'none'; } });
+        searchButton.addEventListener('click', () => { if(teacherInput.value) performSearch(teacherInput.value) });
+        teacherInput.addEventListener('keypress', (e) => { if (e.key === 'Enter' && teacherInput.value) performSearch(teacherInput.value); });
+
+        async function performSearch(teacherName) {
+            searchLoader.style.display = 'flex';
+            searchLoader.innerHTML = `<div class="spinner"></div><h2>Buscando...</h2>`;
+            teacherDetailsDiv.innerHTML = ''; coursesResultsDiv.innerHTML = '';
+            try {
+                const url = `${WEB_APP_URL}?action=searchByTeacher&teacher=${encodeURIComponent(teacherName)}&semestre=${selectedSemester}`;
+                const response = await fetch(url);
+                const result = await response.json();
+                searchLoader.style.display = 'none';
+                if (result.success) {
+                    currentTeacherData = result.data.details;
+                    existingReportsMap = result.data.existingReports;
+                    displayTeacherDetails(result.data.details);
+                    displayCourses(result.data.courses, teacherName);
+                } else { throw new Error(result.message); }
+            } catch (error) { searchLoader.style.display = 'none'; coursesResultsDiv.innerHTML = `<p class="message" style="color:red;font-weight:bold;">${error.message}</p>`; }
+        }
+
+        function displayTeacherDetails(details) { teacherDetailsDiv.innerHTML = details ? `<h2>${details.NombreCompleto || ''}</h2><p><strong>Grado:</strong> ${details.GradoAcademico || 'N/A'}</p><p><strong>Correo:</strong> ${details.CorreoElectronico || 'N/A'}</p>` : `<p class="message">No se encontraron detalles para este docente.</p>`; }
+
+        function displayCourses(courses, teacherName) {
+            coursesResultsDiv.innerHTML = '';
+            if (courses.length === 0) { coursesResultsDiv.innerHTML = `<p class="message">No se encontraron cursos para ${teacherName} en ${selectedSemester}.</p>`; return; }
+            courses.forEach(course => {
+                const card = document.createElement('div');
+                card.className = 'course-card';
+                card.dataset.course = JSON.stringify(course);
+                const reportId = `${selectedSemester}-${course.codigo}-${course.seccion}`;
+                const reportUrl = existingReportsMap[reportId];
+                const isReportDone = !!reportUrl;
+                
+                let actionButton;
+                if (isReportDone) {
+                    actionButton = `<a href="${reportUrl}" target="_blank" class="btn btn-done">Informe Completado</a>`;
+                } else {
+                    actionButton = `<button class="btn btn-action">Hacer Informe</button>`;
+                }
+
+                card.innerHTML = `
+                    <h3>${course.codigo} - ${course.nombre}</h3>
+                    <p><strong>Sección:</strong> ${course.seccion}</p>
+                    <div class="details-grid">
+                        <div class="detail-item"><strong>Ciclo:</strong> ${course.ciclo}</div>
+                        <div class="detail-item"><strong>Horas:</strong> ${course.horas}</div>
+                        <div class="detail-item"><strong>Créditos:</strong> ${course.creditos}</div>
+                        <div class="detail-item"><strong>Tipo:</strong> ${course.tipo}</div>
+                        <div class="detail-item" style="grid-column: span 2;"><strong>Área Académica:</strong> ${course.area}</div>
+                    </div>
+                    <div class="card-buttons">${actionButton}</div>`;
+                coursesResultsDiv.appendChild(card);
+            });
+        }
+        
+        coursesResultsDiv.addEventListener('click', e => {
+            const button = e.target.closest('.btn-action');
+            if (button) {
+                const card = button.closest('.course-card');
+                currentCourseData = JSON.parse(card.dataset.course);
+                const { nombre, codigo, seccion } = currentCourseData;
+                reportModal.querySelector('#modalTitle').textContent = `Informe: ${codigo} - ${nombre} (Sección ${seccion})`;
+                matriculadosInput.value = ''; evaluadosInput.value = ''; skillsContainer.innerHTML = ''; finalResponseDiv.innerHTML = ''; addSkillRow(); recalculateAndValidate();
+                saveReportBtn.style.display = 'block';
+                reportModal.style.display = 'flex';
+            }
+        });
+
+        modalCloseBtn.addEventListener('click', () => {
+            reportModal.style.display = 'none';
+            if (finalResponseDiv.innerHTML.includes('¡Informe Generado!')) {
+                performSearch(teacherInput.value);
+            }
+        });
+        
+        addSkillBtn.addEventListener('click', () => { if (skillsContainer.children.length < 5) addSkillRow(); });
+        skillsContainer.addEventListener('click', e => { if (e.target.classList.contains('btn-remove-skill')) { if (skillsContainer.children.length > 1) e.target.parentElement.remove(); recalculateAndValidate(); } });
+        
+        function addSkillRow() { const skillRow = document.createElement('div'); skillRow.className = 'skill-row'; skillRow.innerHTML = `<input type="text" placeholder="Escribe aquí..."><input type="number" class="level-input" min="0" data-level="deficiente"><span class="percent" data-level="deficiente-p">0.00</span><input type="number" class="level-input" min="0" data-level="suficiente"><span class="percent" data-level="suficiente-p">0.00</span><input type="number" class="level-input" min="0" data-level="bueno"><span class="percent" data-level="bueno-p">0.00</span><span class="percent" data-level="total-p">0.00</span><button class="btn btn-remove-skill">×</button>`; skillsContainer.appendChild(skillRow); }
+        
+        reportModal.addEventListener('input', recalculateAndValidate);
+
+        function recalculateAndValidate() {
+            let isOverallValid = true;
+            const matriculados = parseInt(matriculadosInput.value) || 0;
+            const evaluados = parseInt(evaluadosInput.value) || 0;
+            if (evaluados > matriculados && matriculados > 0) { isOverallValid = false; evaluadosInput.classList.add('input-error'); validationMsg.textContent = 'Error: Evaluados no puede superar a Matriculados.'; } 
+            else { evaluadosInput.classList.remove('input-error'); validationMsg.textContent = ''; }
+            
+            document.querySelectorAll('.skill-row').forEach(row => {
+                const inputs = row.querySelectorAll('.level-input');
+                let sumaFila = 0; inputs.forEach(input => sumaFila += parseInt(input.value) || 0);
+                const rowIsValid = (evaluados === 0) || (sumaFila <= evaluados);
+                if (!rowIsValid) isOverallValid = false;
+                inputs.forEach(input => input.classList.toggle('input-error', !rowIsValid));
+                const def = parseInt(row.querySelector('[data-level="deficiente"]').value) || 0; const suf = parseInt(row.querySelector('[data-level="suficiente"]').value) || 0; const bue = parseInt(row.querySelector('[data-level="bueno"]').value) || 0;
+                const pDef = evaluados > 0 ? (def / evaluados) * 100 : 0; const pSuf = evaluados > 0 ? (suf / evaluados) * 100 : 0; const pBue = evaluados > 0 ? (bue / evaluados) * 100 : 0; const pTotal = pDef + pSuf + pBue;
+                row.querySelector('[data-level="deficiente-p"]').textContent = pDef.toFixed(2); row.querySelector('[data-level="suficiente-p"]').textContent = pSuf.toFixed(2); row.querySelector('[data-level="bueno-p"]').textContent = pBue.toFixed(2);
+                const totalPercentSpan = row.querySelector('[data-level="total-p"]'); totalPercentSpan.textContent = pTotal.toFixed(2);
+                totalPercentSpan.style.backgroundColor = `hsl(${(pTotal / 100) * 120}, 90%, 50%)`; totalPercentSpan.style.color = pTotal > 40 && pTotal < 85 ? 'black' : 'white';
+            });
+            if (validationMsg.textContent === '') { validationMsg.textContent = isOverallValid ? '' : 'Error: La suma por fila no puede superar el total de evaluados.'; }
+            saveReportBtn.disabled = !isOverallValid || evaluados === 0 || matriculados === 0;
+        }
+
+        saveReportBtn.addEventListener('click', async () => {
+            saveReportBtn.disabled = true;
+            saveReportBtn.innerHTML = `<div class="spinner" style="width:20px; height:20px; border-width:3px; margin:auto;"></div>`;
+            finalResponseDiv.innerHTML = '';
+            
+            const reportData = {
+                semestre: selectedSemester, matriculados: matriculadosInput.value, evaluados: evaluadosInput.value,
+                course: currentCourseData, docente: currentTeacherData,
+                skills: Array.from(skillsContainer.querySelectorAll('.skill-row')).map(row => {
+                    const totalEvaluados = parseInt(evaluadosInput.value) || 0;
+                    const def = parseInt(row.querySelector('[data-level="deficiente"]').value) || 0; const suf = parseInt(row.querySelector('[data-level="suficiente"]').value) || 0; const bue = parseInt(row.querySelector('[data-level="bueno"]').value) || 0;
+                    return {
+                        name: row.querySelector('input[type="text"]').value,
+                        deficiente_cantidad: def, deficiente_porcentaje: totalEvaluados > 0 ? (def / totalEvaluados) : 0,
+                        suficiente_cantidad: suf, suficiente_porcentaje: totalEvaluados > 0 ? (suf / totalEvaluados) : 0,
+                        bueno_cantidad: bue, bueno_porcentaje: totalEvaluados > 0 ? (bue / totalEvaluados) : 0,
+                        total_porcentaje: totalEvaluados > 0 ? ((def + suf + bue) / totalEvaluados) : 0
+                    };
+                }).filter(skill => skill.name.trim() !== '')
+            };
+            try {
+                const response = await fetch(WEB_APP_URL, { method: 'POST', mode: 'cors', cache: 'no-cache', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ action: 'generateAndLogReport', data: reportData }) });
+                const result = await response.json();
+                if (result.success) {
+                    saveReportBtn.style.display = 'none';
+                    finalResponseDiv.innerHTML = `✅ ¡Informe Generado! <a href="${result.url}" target="_blank">Abrir Archivo</a>`;
+                } 
+                else { throw new Error(result.message || 'Error desconocido.'); }
+            } catch (error) {
+                finalResponseDiv.innerHTML = `<span style="color:var(--danger-color)">Error: ${error.message}</span>`;
+            } 
+            finally { 
+                saveReportBtn.innerHTML = 'Generar Informe';
+                saveReportBtn.disabled = false; 
+            }
+        });
+    </script>
+</body>
+</html>
