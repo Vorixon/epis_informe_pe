@@ -190,7 +190,7 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.0.0/dist/signature_pad.umd.min.js"></script>
     <script>
-        const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwkv_UPkON-MjZ27D4wger5kdovrYKfgtLtG8VH1PAar-SDDhXcnCXJRZO896RMegqMew/exec";
+        const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbx5PJwzidSPuMncrMMpp0vfhOwcj00Ywnnw3TUckdcAFcfO12dpT1vItS5Optehk8OVmQ/exec";
         
         const semesterModal = document.getElementById('semesterModal');
         const semesterSelector = document.getElementById('semesterSelector');
@@ -253,9 +253,14 @@
         window.addEventListener('resize', resizeCanvas);
         
         clearSignatureBtn.addEventListener('click', () => {
-             if (signaturePad) {
+             const wrapperIsVisible = signaturePadWrapper.style.display !== 'none';
+             if (wrapperIsVisible) {
                 signaturePad.clear();
-            }
+             } else {
+                existingSignatureWrapper.style.display = 'none';
+                signaturePadWrapper.style.display = 'block';
+                clearSignatureBtn.textContent = 'Limpiar Firma';
+             }
         });
 
         loadSemesterBtn.addEventListener('click', async () => {
@@ -411,17 +416,10 @@
                 existingSignatureWrapper.style.display = 'block';
                 signaturePadWrapper.style.display = 'none';
                 clearSignatureBtn.textContent = 'Firmar de Nuevo';
-                clearSignatureBtn.onclick = () => {
-                    existingSignatureWrapper.style.display = 'none';
-                    signaturePadWrapper.style.display = 'block';
-                    clearSignatureBtn.textContent = 'Limpiar Firma';
-                    clearSignatureBtn.onclick = () => signaturePad.clear();
-                };
             } else {
                 existingSignatureWrapper.style.display = 'none';
                 signaturePadWrapper.style.display = 'block';
                 clearSignatureBtn.textContent = 'Limpiar Firma';
-                clearSignatureBtn.onclick = () => signaturePad.clear();
             }
 
             recalculateAndValidate();
