@@ -3,144 +3,296 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Gestor de Informes Académicos</title>
+    <title>Gestor de Informes Académicos - Visión 2025</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary-color: #0078d4; --success-color: #107c10; --warning-color: #ffb900;
-            --danger-color: #d83b01; --secondary-color: #605e5c; --light-gray: #f3f2f1;
-            --border-radius: 8px; --font-family: "Segoe UI", -apple-system, BlinkMacSystemFont, Roboto, "Helvetica Neue", sans-serif;
+            --font-family: "Segoe UI", "Inter", -apple-system, BlinkMacSystemFont, Roboto, "Helvetica Neue", sans-serif;
+            
+            /* Paleta Inspirada en "Windows 12" (Conceptual) */
+            --primary-color: #005fba;
+            --primary-color-light: rgba(0, 120, 212, 0.15);
+            --primary-color-focus-ring: rgba(0, 120, 212, 0.3);
+            
+            --success-color: #0d875a;
+            --warning-color: #b48700;
+            --danger-color: #d13438;
+            --orange-color: #f7630c;
+
+            --success-bg: #e7f4f0;
+            --warning-bg: #fff9e6;
+            --danger-bg: #fdf0f0;
+            --orange-bg: #fff4ec;
+
+            --text-primary: #0d0d0d;
+            --text-secondary: #595959;
+            --text-on-primary: #ffffff;
+            
+            --surface-ground: #f9f9f9;
+            --surface-card: rgba(255, 255, 255, 0.85); /* Efecto Acrílico */
+            --surface-border: rgba(0, 0, 0, 0.08);
+            --surface-border-light: rgba(0, 0, 0, 0.05);
+            
+            --border-radius: 8px;
+            --transition-speed: 0.25s;
+            --box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+            --box-shadow-hover: 0 8px 24px rgba(0,0,0,0.08);
         }
-        body { font-family: var(--font-family); background-color: var(--light-gray); color: #333; margin: 0; padding: 20px; }
-        .spinner { width: 40px; height: 40px; border: 4px solid rgba(0,0,0,0.1); border-top: 4px solid var(--primary-color); border-radius: 50%; animation: spin 1s linear infinite; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 9999; display: none; justify-content: center; align-items: center; background-color: rgba(0, 0, 0, 0.4); backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px); }
-        .modal-content { background: white; padding: 30px; border-radius: var(--border-radius); width: 95%; box-shadow: 0 8px 32px rgba(0,0,0,0.2); position: relative; }
-        .modal-close { position: absolute; top: 15px; right: 20px; font-size: 28px; cursor: pointer; color: #888; }
-        #semesterModal { display: flex; }
-        #semesterModal .modal-content { max-width: 400px; text-align: center; }
-        #semesterModal h2 { margin-top: 0; color: var(--primary-color); }
-        #semesterModal select, #semesterModal button { font-size: 1.1em; padding: 12px; border-radius: var(--border-radius); margin-top: 15px; width: 100%; border: 1px solid #ccc; }
-        #semesterModal button { background-color: var(--primary-color); color: white; border: none; cursor: pointer; transition: background-color 0.2s; }
+
+        body {
+            font-family: var(--font-family);
+            background-color: var(--surface-ground);
+            background-image: linear-gradient(to top, #f8f9fa, #ffffff);
+            color: var(--text-primary);
+            margin: 0;
+            padding: 32px;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* --- Utilidades y Animaciones --- */
+        .spinner {
+            width: 32px; height: 32px; border: 3px solid var(--primary-color-light);
+            border-top: 3px solid var(--primary-color); border-radius: 50%;
+            animation: spin 0.8s cubic-bezier(0.65, 0.05, 0.36, 1) infinite;
+        }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+
+        hr { border: 0; height: 1px; background-color: var(--surface-border-light); margin: 32px 0; }
+
+        /* --- Estructura Principal y Contenedor --- */
         #app-container { display: none; }
-        .container { max-width: 1200px; margin: 0 auto; background: white; padding: 30px; border-radius: var(--border-radius); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
-        h1 { text-align: center; color: var(--primary-color); margin-bottom: 10px; }
-        #semester-display { text-align: center; font-size: 1.3em; font-weight: 600; color: var(--secondary-color); margin-bottom: 25px; background: #e9f5ff; padding: 10px; border-radius: var(--border-radius); border: 1px solid #cce5ff; }
-        .form-section { margin-bottom: 20px; }
-        .form-section label { font-weight: 600; display: block; margin-bottom: 8px; font-size: 1.1em; }
-        .form-section select, .form-section input { width: 100%; box-sizing: border-box; padding: 12px; border: 1px solid #ccc; border-radius: var(--border-radius); font-size: 16px; }
+        .container {
+            max-width: 1200px; margin: 32px auto;
+            background: var(--surface-card);
+            padding: 32px 40px; border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            border: 1px solid rgba(255,255,255,0.9);
+        }
+        h1 {
+            text-align: center; color: var(--primary-color);
+            font-size: 2em; font-weight: 600; margin-bottom: 8px;
+        }
+        #semester-display {
+            text-align: center; font-size: 1.1em; font-weight: 400;
+            color: var(--text-secondary); margin-bottom: 32px;
+            background: var(--surface-ground); padding: 12px;
+            border-radius: var(--border-radius);
+        }
+
+        /* --- Modales (Estilo Acrílico) --- */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 9999; display: none; justify-content: center; align-items: center;
+            background-color: rgba(240, 240, 240, 0.5);
+            backdrop-filter: blur(20px) saturate(1.5);
+            -webkit-backdrop-filter: blur(20px) saturate(1.5);
+        }
+        .modal-content {
+            background: var(--surface-card); padding: 32px; border-radius: var(--border-radius);
+            width: 95%; box-shadow: var(--box-shadow-hover);
+            border: 1px solid rgba(255, 255, 255, 0.9);
+            position: relative;
+        }
+        .modal-close {
+            position: absolute; top: 16px; right: 20px; font-size: 18px;
+            font-weight: normal; cursor: pointer; color: var(--text-secondary);
+            transition: color var(--transition-speed);
+        }
+        .modal-close:hover { color: var(--text-primary); }
+
+        #semesterModal { display: flex; }
+        #semesterModal .modal-content { max-width: 380px; text-align: center; }
+        #semesterModal h2 { color: var(--primary-color); margin-top: 0; margin-bottom: 24px; font-weight: 600; }
+        #semesterLoader { display: none; margin-top: 15px; }
+
+        /* --- Formularios y Entradas (Estilo Fluent) --- */
+        .form-section { margin-bottom: 24px; }
+        .form-section label {
+            font-weight: 600; display: block; margin-bottom: 8px; font-size: 0.9em;
+            color: var(--text-secondary);
+        }
+        select, input[type="text"], input[type="number"], textarea {
+            width: 100%; box-sizing: border-box; padding: 10px 12px;
+            border: 1px solid var(--surface-border); border-radius: var(--border-radius);
+            font-size: 1em; font-family: var(--font-family);
+            background-color: #ffffff;
+            transition: border-color var(--transition-speed), box-shadow var(--transition-speed);
+        }
+        select:focus, input:focus, textarea:focus {
+            outline: none; border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px var(--primary-color-focus-ring);
+        }
+        input::placeholder { color: #a1a1a1; }
+        .input-error { border-color: var(--danger-color) !important; }
+
+        /* --- Búsqueda --- */
         #search-section { display: none; }
-        .search-container { position: relative; }
-        .search-form { display: flex; gap: 10px; }
-        .search-input-wrapper { position:relative; flex-grow:1; }
-        .suggestions-container { display: none; position: absolute; background-color: white; border: 1px solid #ccc; top: 100%; left:0; right:0; z-index: 1000; max-height: 240px; overflow-y: auto; box-shadow: 0 4px 8px rgba(0,0,0,0.1); border-radius: 0 0 var(--border-radius) var(--border-radius); }
-        .suggestion-item { padding: 12px 15px; cursor: pointer; font-size: 16px; }
-        .suggestion-item:hover { background-color: var(--light-gray); }
-        #search-loader { display: none; align-items: center; justify-content: center; flex-direction: column; gap: 15px; padding: 20px; }
-        #results-container { margin-top: 30px; }
-        #teacher-details { background: var(--light-gray); padding: 20px; border-radius: var(--border-radius); border: 1px solid #eee; margin-bottom: 30px; }
-        #courses-results { display: grid; grid-template-columns: repeat(auto-fill, minmax(400px, 1fr)); gap: 20px; }
-        .course-card { border: none; border-radius: var(--border-radius); padding: 20px; background-color: #fff; display: flex; flex-direction: column; box-shadow: 0 4px 15px rgba(0,0,0,0.08); transition: all 0.3s ease-in-out; }
-        .course-card:hover { transform: translateY(-4px); box-shadow: 0 8px 25px rgba(0,0,0,0.1); }
-        .course-card h3 { margin: 0 0 10px 0; font-size: 1.1em; color: var(--primary-color); }
-        .course-card .details-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; border-top: 1px solid var(--light-gray); margin-top: 15px; padding-top: 15px; }
-        .course-card .detail-item { font-size: 0.9em; }
-        .course-card .card-buttons { display: flex; flex-wrap: wrap; justify-content: flex-end; align-items: center; gap: 10px; margin-top: 20px; border-top: 1px solid var(--light-gray); padding-top: 15px; }
-        .btn { border: none; padding: 8px 15px; border-radius: var(--border-radius); cursor: pointer; font-weight: 600; color: white; transition: all 0.2s; text-decoration: none; display: inline-flex; align-items: center; justify-content: center; gap: 8px; font-size: 0.9em; }
-        .btn-entry-new { background-color: var(--warning-color); color: #333; }
-        .btn-entry-pending { background-color: var(--primary-color); }
-        .btn-entry-done { background-color: var(--success-color); }
-        .btn-secondary { background-color: var(--secondary-color); }
-        .btn-portfolio-new { background-color: #605e5c; }
-        .btn-portfolio-done { background-color: #107c10; }
-        .btn-doc-portfolio-new { background-color: #8E44AD; }
-        .btn-doc-portfolio-done { background-color: #2ECC71; }
-        .btn:hover:not(:disabled) { opacity: 0.85; }
-        .modal-footer { display: flex; justify-content: flex-end; align-items: center; margin-top: 25px; border-top: 1px solid #eee; padding-top: 15px; min-height: 40px; }
+        .search-form { display: flex; gap: 8px; }
+        .search-input-wrapper { position: relative; flex-grow: 1; }
+        #search-loader { display: none; align-items: center; justify-content: center; flex-direction: column; gap: 15px; padding: 40px 20px; text-align:center; }
+        #search-loader h2 { font-weight: 400; color: var(--text-secondary); }
+        .suggestions-container {
+            display: none; position: absolute; background-color: #fff;
+            border: 1px solid var(--surface-border); top: calc(100% + 4px);
+            left: 0; right: 0; z-index: 1000;
+            max-height: 240px; overflow-y: auto;
+            box-shadow: var(--box-shadow); border-radius: var(--border-radius);
+        }
+        .suggestion-item { padding: 10px 15px; cursor: pointer; font-size: 1em; }
+        .suggestion-item:hover { background-color: var(--primary-color-light); }
+
+        /* --- Resultados y Tarjetas --- */
+        #results-container { margin-top: 32px; }
+        #teacher-details {
+            background: var(--surface-ground); padding: 20px 24px; border-radius: var(--border-radius); margin-bottom: 32px;
+        }
+        #teacher-details h2 { color: var(--primary-color); margin: 0; font-size: 1.25em; font-weight: 600; }
+        #teacher-details p { margin: 4px 0 0; color: var(--text-secondary); }
+        #courses-results {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); gap: 24px;
+        }
+        .course-card {
+            border: none; border-radius: var(--border-radius); padding: 24px;
+            background-color: var(--surface-card); display: flex; flex-direction: column;
+            box-shadow: var(--box-shadow);
+            transition: transform var(--transition-speed), box-shadow var(--transition-speed);
+        }
+        .course-card:hover { transform: translateY(-4px); box-shadow: var(--box-shadow-hover); }
+        .course-card h3 { margin: 0 0 12px 0; font-size: 1.1em; font-weight: 600; color: var(--text-primary); }
+        .course-card .details-grid {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 16px;
+            padding-top: 16px; border-top: 1px solid var(--surface-border-light); font-size: 0.9em;
+        }
+        .course-card .detail-item strong { font-weight: 600; color: var(--text-secondary); margin-right: 6px; }
+
+        /* --- Botones (Estilo Fluent) --- */
+        .btn {
+            border: 1px solid var(--surface-border); padding: 8px 16px; border-radius: var(--border-radius);
+            cursor: pointer; font-weight: 600; font-family: var(--font-family);
+            transition: all var(--transition-speed); text-decoration: none;
+            display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+            font-size: 0.9em; background-color: #ffffff; color: var(--text-primary);
+        }
+        .btn:hover:not(:disabled) { border-color: #bdbdbd; background-color: #f9f9f9; }
+        .btn:focus-visible { outline: none; box-shadow: 0 0 0 3px var(--primary-color-focus-ring); border-color: var(--primary-color); }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; }
         
-        /* --- AJUSTE DE ESTILO DE BOTÓN --- */
-        .btn-save {
-            background-color: var(--primary-color);
-            color: white;
+        .btn.primary, #loadSemesterBtn, #searchButton, .btn-save {
+            background-color: var(--primary-color); color: var(--text-on-primary); border-color: var(--primary-color);
         }
-        .btn-save:disabled { 
-            background-color: #aaa; 
-            cursor: not-allowed; 
+        .btn.primary:hover:not(:disabled) { background-color: #0052a2; border-color: #0052a2; }
+        
+        #loadSemesterBtn, #searchButton, .btn-save { font-size: 1em; padding: 10px 16px; }
+        
+        .course-card .card-buttons {
+            display: flex; flex-wrap: wrap; justify-content: flex-end; align-items: center;
+            gap: 8px; margin-top: 20px; border-top: 1px solid var(--surface-border-light); padding-top: 20px;
         }
+        
+        /* --- BOTONES DE ESTADO --- */
+        .btn-state-new { background-color: var(--orange-bg); color: var(--orange-color); border-color: var(--orange-bg); }
+        .btn-state-new:hover:not(:disabled) { background-color: #fde8d9; border-color: #fde8d9;}
+        .btn-state-pending { background-color: var(--warning-bg); color: var(--warning-color); border-color: var(--warning-bg); }
+        .btn-state-pending:hover:not(:disabled) { background-color: #fff6cf; border-color: #fff6cf;}
+        .btn-state-completed { background-color: var(--success-bg); color: var(--success-color); border-color: var(--success-bg); }
+        .btn-state-completed:hover:not(:disabled) { background-color: #e2f2ec; border-color: #e2f2ec;}
+        .btn-doc-portfolio-new { background-color: var(--primary-color); color: var(--text-on-primary); border-color: var(--primary-color); }
 
-        #final-response, #final-response-portfolio, #final-response-doc-portfolio { flex-grow: 1; text-align: left; }
-        #final-response a, #final-response-portfolio a, #final-response-doc-portfolio a { color: var(--primary-color); text-decoration: none; font-weight: bold; }
+        /* --- Controles de Modales --- */
+        .modal-header { position: relative; }
+        .modal-header h2 { font-weight: 600; font-size: 1.5em; margin-bottom: 24px; color: var(--primary-color); }
+        .modal-header h2 small { font-size: 0.7em; color: var(--text-secondary); font-weight: 400; display: block; margin-top: 4px; }
+        .status-indicator {
+            position: absolute; top: 0; right: 0;
+            padding: 4px 10px; border-radius: 12px; font-weight: 600;
+            font-size: 0.8em; transition: all var(--transition-speed);
+        }
+        .modal-footer {
+            display: flex; justify-content: flex-end; align-items: center; margin-top: 24px;
+            border-top: 1px solid var(--surface-border-light); padding-top: 24px;
+        }
+        #final-response, #final-response-portfolio, #final-response-doc-portfolio { flex-grow: 1; text-align: left; font-weight: 500; }
+        #final-response a, #final-response-portfolio a, #final-response-doc-portfolio a { color: var(--primary-color); text-decoration: none; font-weight: 600; }
+        
+        /* --- ESTILO DE PORCENTAJE UNIFICADO --- */
+        .percent, .percentage {
+            padding: 5px 8px; border-radius: var(--border-radius);
+            font-weight: 600; font-size: 0.9em; text-align: center;
+            background-color: var(--surface-ground); color: var(--text-secondary);
+        }
+        .pct-bg-green { background-color: var(--success-bg); color: var(--success-color); }
+        .pct-bg-yellow { background-color: var(--warning-bg); color: var(--warning-color); }
+        .pct-bg-red { background-color: var(--danger-bg); color: var(--danger-color); }
 
-        /* Estilos específicos para el Modal de Prueba de Entrada */
-        #reportModal .modal-content { max-width: 950px; max-height: 90vh; overflow-y: auto; }
-        #reportModal .top-form-group { display: flex; flex-wrap: wrap; gap: 15px 30px; align-items: center; margin-bottom: 20px; }
-        #reportModal .top-form-group label { font-weight: 600; }
-        #reportModal .top-form-group input { padding: 8px; border-radius: var(--border-radius); border: 1px solid #ccc; width: 120px; }
-        .skills-header { display: grid; grid-template-columns: 2.5fr 1fr 0.8fr 1fr 0.8fr 1fr 0.8fr 1fr 50px; gap: 10px; font-weight: 600; margin-top: 20px; padding-bottom: 5px; border-bottom: 2px solid #ccc; font-size: 0.85em; text-align: center; }
-        .skill-row { display: grid; grid-template-columns: 2.5fr 1fr 0.8fr 1fr 0.8fr 1fr 0.8fr 1fr 50px; gap: 10px; align-items: center; margin-top: 10px; }
-        .skill-row span { font-weight: bold; text-align: center; padding: 5px; border-radius: 4px; }
-        .skill-row input { text-align: center; padding: 8px; border-radius: var(--border-radius); border: 1px solid #ccc; }
-        .skill-row .level-input { width: 80px; }
-        .add-skill-container { text-align: right; margin-top: 10px; }
-        input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
-        input[type=number] { -moz-appearance: textfield; }
-        .skill-row .input-error { border: 2px solid var(--danger-color) !important; }
-        #validation-message { color: var(--danger-color); font-weight: 600; margin-top: 10px; text-align: center; height: 20px; }
-        .btn-add-skill, .btn-remove-skill { border-radius: var(--border-radius); border: none; cursor: pointer; color: white; padding: 10px; }
-        .btn-add-skill { background-color: var(--primary-color); }
-        .btn-remove-skill { background-color: var(--danger-color); padding: 5px 10px;}
-        .corrective-measures { margin-top: 25px; padding-top: 20px; border-top: 1px solid #eee; }
-        .corrective-measures h4 { margin-top: 0; color: var(--primary-color); margin-bottom: 15px; }
-        .checkbox-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px 20px; }
+        /* --- Modal de Prueba de Entrada --- */
+        #reportModal .modal-content { max-width: 1024px; max-height: 90vh; overflow-y: auto; }
+        .skills-header, .skill-row {
+            display: grid; grid-template-columns: 2.5fr 1fr 0.8fr 1fr 0.8fr 1fr 0.8fr 1fr 40px;
+            gap: 12px; align-items: center;
+        }
+        .skills-header {
+            font-weight: 600; padding-bottom: 8px; border-bottom: 1px solid var(--surface-border);
+            font-size: 0.8em; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px;
+        }
+        .skill-row { margin-top: 12px; }
+        .btn-remove-skill { background-color: transparent; color: var(--text-secondary); padding: 4px; border-radius: 50%; width: 28px; height: 28px; font-size: 16px; border: none; }
+        .btn-remove-skill:hover { background-color: var(--danger-bg); color: var(--danger-color); }
+        #validation-message { color: var(--danger-color); font-weight: 500; margin-top: 12px; text-align: center; height: 20px; font-size: 0.9em; }
+        .corrective-measures h4, .signature-section h4 { color: var(--text-primary); font-weight: 600; margin-bottom: 16px; font-size: 1.1em; }
+        .checkbox-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
         .checkbox-group { display: flex; align-items: center; gap: 10px; }
-        .checkbox-group input[type="checkbox"] { width: 18px; height: 18px; flex-shrink: 0; }
-        .checkbox-group label { font-size: 0.9em; }
-        .description-group { margin-top: 20px; }
-        .description-group label { display: block; font-weight: 600; margin-bottom: 5px; }
-        .description-group textarea { width: 100%; min-height: 70px; padding: 10px; border-radius: var(--border-radius); border: 1px solid #ccc; box-sizing: border-box; resize: vertical; }
-        .date-group { margin-top: 20px; }
-        .date-group label { font-weight: 600; margin-right: 10px; }
-        .date-group input { padding: 8px; border-radius: var(--border-radius); border: 1px solid #ccc; }
-        .signature-section { margin-top: 25px; padding-top: 20px; border-top: 1px solid #eee; }
-        .signature-section h4 { margin-top: 0; color: var(--primary-color); margin-bottom: 10px; }
-        .signature-pad-wrapper { border: 2px dashed #ccc; border-radius: var(--border-radius); position: relative; height: 200px; }
+        .checkbox-group label { font-size: 0.95em; }
+        
+        /* --- Firma --- */
+        .signature-pad-wrapper { border: 2px dashed var(--surface-border); border-radius: var(--border-radius); position: relative; height: 180px; background: #fff; }
         canvas { width: 100%; height: 100%; cursor: crosshair; touch-action: none; }
-        .signature-controls { margin-top: 10px; display: flex; justify-content: flex-end; }
-        .existing-signature-wrapper iframe { width: 100%; height: 200px; border: 2px dashed #ccc; border-radius: var(--border-radius); }
+        .existing-signature-wrapper iframe { width: 100%; height: 180px; border: 1px solid var(--surface-border); border-radius: var(--border-radius); }
         
-        /* Estilos para Modales de Portafolio y Documentación */
-        #portfolioModal .modal-content, #docPortfolioModal .modal-content { max-width: 950px; max-height: 90vh; overflow-y: auto; }
-        .portfolio-grid { display: grid; grid-template-columns: 1.5fr 1fr 1fr; gap: 10px; align-items: center; }
-        .portfolio-grid .grid-header { font-weight: bold; padding: 8px; border-bottom: 2px solid #333; }
-        .portfolio-grid .grid-row { display: contents; }
+        /* --- Modal Portafolio --- */
+        #portfolioModal .modal-content { max-width: 1024px; max-height: 90vh; overflow-y: auto; }
+        .portfolio-grid { display: grid; grid-template-columns: 1.5fr 1fr 1.5fr; gap: 12px; align-items: center; }
+        .portfolio-grid .grid-header { font-weight: 600; color: var(--text-secondary); padding: 8px 0; border-bottom: 1px solid var(--surface-border); font-size: 0.8em; text-transform: uppercase; }
         .portfolio-grid label { font-weight: 600; }
-        .portfolio-grid input[type="number"] { width: 100%; box-sizing: border-box; padding: 10px; border: 1px solid #ccc; border-radius: var(--border-radius); text-align: center; }
-        .portfolio-grid input:read-only { background-color: var(--light-gray); font-weight: bold; }
-        .portfolio-grid .percentage { position: relative; background-color: #e9ecef; border-radius: .25rem; overflow: hidden; text-align: center; height: 100%; display: flex; justify-content: center; align-items: center; }
-        .portfolio-grid .percentage span { position: relative; z-index: 1; font-weight: bold; color: #333; }
-        .progress-bar { position: absolute; top: 0; left: 0; height: 100%; transition: width 0.4s ease, background-color 0.4s ease; }
-        .pct-green { background-color: var(--success-color); }
-        .pct-yellow { background-color: var(--warning-color); }
-        .pct-red { background-color: var(--danger-color); }
-        .sub-group { grid-column: 1 / -1; display: grid; grid-template-columns: inherit; gap: inherit; padding-left: 15px; margin-left: 25px; border-left: 3px solid var(--light-gray); }
-        #portfolioValidationMsg { color: var(--danger-color); font-weight: 600; margin-top: 15px; text-align: center; height: 20px; transition: all 0.3s; }
-        .material-grid { display: grid; grid-template-columns: 2fr 0.5fr 0.5fr 1fr 2fr; gap: 8px; align-items: center; margin-top: 20px;}
-        .material-grid .grid-header { font-weight: bold; text-align: center; }
-        .material-grid label { font-size: 0.9em; }
-        .material-grid input[type="checkbox"] { justify-self: center; width: 20px; height: 20px;}
-        .material-grid input[type="number"] { padding: 8px; }
+        input:read-only { background-color: var(--surface-border-light); font-weight: 600; border-color: transparent; }
+        .portfolio-grid .percentage { position: relative; overflow: hidden; height: 38px; display: flex; justify-content: center; align-items: center; }
+        .portfolio-grid .sub-group { padding-left: 20px; border-left: 2px solid var(--surface-border-light); }
+        #portfolioValidationMsg { color: var(--danger-color); font-weight: 500; margin-top: 16px; text-align: center; height: 20px; font-size: 0.9em; }
         
-        .file-upload-wrapper { display: flex; flex-direction: column; }
-        input[type="file"] { display: none; }
-        .file-btn { background-color: var(--secondary-color); color: white; padding: 6px 12px; border-radius: var(--border-radius); cursor: pointer; text-align: center; font-size: 0.8em; margin-bottom: 4px;}
-        .file-name { font-size: 0.75em; color: var(--secondary-color); margin-top: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-height: 1.2em;}
-        
-        .doc-grid { display: grid; grid-template-columns: 1fr 2fr; gap: 15px; align-items: center; }
-        .doc-grid .category { font-weight: bold; color: var(--danger-color); grid-column: 1 / -1; margin-top: 15px; border-bottom: 1px solid #ccc; padding-bottom: 5px; }
-        .doc-grid label { font-size: 0.9em; }
-        .doc-grid .sub-item { padding-left: 20px; }
-        .doc-grid .sub-sub-item { padding-left: 40px; }
+        .material-grid {
+            display: grid; grid-template-columns: 2fr 0.5fr 0.5fr 1fr 1.5fr; gap: 12px; align-items: center; margin-top: 20px;
+        }
+        .material-grid .grid-header { font-weight: 600; text-align: center; color: var(--text-secondary); font-size: 0.8em; text-transform: uppercase; }
+        .material-grid label { font-size: 0.95em; }
+        .material-grid input[type="checkbox"] { justify-self: center; width: 18px; height: 18px; }
 
-        @media (max-width: 768px) { .skills-header, .skill-row { font-size: 0.75em; gap: 5px; } .checkbox-grid { grid-template-columns: 1fr; } .material-grid { grid-template-columns: 1fr; text-align: center; } }
+        /* --- Modal Documentación --- */
+        #docPortfolioModal .modal-content { max-width: 800px; max-height: 90vh; overflow-y: auto; }
+        .doc-category { font-weight: 600; color: var(--primary-color); margin-top: 24px; padding-bottom: 8px; font-size: 1.1em; }
+        .doc-subcategory { font-weight: 600; color: var(--text-primary); margin-top: 16px; margin-left: 15px; font-size: 1em; }
+        .doc-item { display: grid; grid-template-columns: 1fr auto; gap: 16px; align-items: center; padding: 8px 0 8px 30px; border-bottom: 1px solid var(--surface-border-light); }
+        .doc-item label { font-size: 0.95em; color: var(--text-secondary); }
+        .project-block { background: var(--surface-ground); border-radius: var(--border-radius); padding: 16px; margin-top: 10px; border: 1px solid var(--surface-border); }
+        .project-header { display: flex; justify-content: space-between; align-items: center; font-weight: 600; padding-bottom: 10px; margin-bottom: 10px; border-bottom: 1px solid var(--surface-border); }
+        .project-item { display: grid; grid-template-columns: 1fr 2fr; gap: 12px; align-items: center; margin-top: 10px; }
+        .file-upload-wrapper { display: flex; align-items: center; gap: 8px; }
+        input[type="file"] { display: none; }
+        .file-btn { padding: 6px 12px; font-size: 0.85em; flex-shrink: 0; }
+        .file-name { font-size: 0.8em; color: var(--text-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-height: 1.2em; padding: 4px 8px; border-radius: var(--border-radius); }
+        .file-name a { color: var(--primary-color); text-decoration: none; font-weight: 600;}
+        .file-name-filled { background-color: var(--success-bg); color: var(--success-color); font-weight: 600; }
+
+        @media (max-width: 768px) {
+            body { padding: 12px; }
+            .container, .modal-content { padding: 16px; }
+            .skills-header, .skill-row { font-size: 0.7em; gap: 5px; grid-template-columns: 2fr repeat(7, 1fr) 30px; }
+            .checkbox-grid { grid-template-columns: 1fr; }
+            .material-grid { grid-template-columns: 1fr; text-align: left; gap: 16px; }
+            .material-grid .grid-header { display: none; }
+            .doc-item, .project-item { grid-template-columns: 1fr; }
+        }
     </style>
 </head>
 <body>
@@ -153,8 +305,8 @@
                 <option value="2025-1">2025-1</option><option value="2025-2">2025-2</option>
                 <option value="2024-2">2024-2</option><option value="2024-1">2024-1</option>
             </select>
-            <button id="loadSemesterBtn">Cargar Datos</button>
-            <div id="semesterLoader" style="display: none; margin-top: 15px;"><div class="spinner" style="margin:auto;"></div></div>
+            <button id="loadSemesterBtn" class="btn primary" style="width: 100%; margin-top: 16px;">Cargar Datos</button>
+            <div id="semesterLoader"><div class="spinner" style="margin: 20px auto 0;"></div></div>
         </div>
     </div>
 
@@ -184,7 +336,7 @@
                             <input type="text" id="teacherInput" placeholder="Escribe el nombre del docente..." autocomplete="off" required>
                             <div id="suggestions" class="suggestions-container"></div>
                         </div>
-                        <button type="button" id="searchButton">Buscar</button>
+                        <button type="button" id="searchButton" class="btn primary">Buscar</button>
                     </div>
                 </div>
             </div>
@@ -201,24 +353,32 @@
     <div id="reportModal" class="modal-overlay">
         <div class="modal-content">
             <span class="modal-close">×</span>
-            <div class="modal-header"><h2 id="modalTitle"></h2></div>
+            <div class="modal-header">
+                <h2 id="modalTitle"></h2>
+                <div id="entryTestStatusIndicator" class="status-indicator"></div>
+            </div>
             <div class="modal-body">
-                 <div class="top-form-group">
-                    <label>Matriculados:</label><input type="number" id="matriculados" min="0">
-                    <label>Evaluados:</label><input type="number" id="evaluados" min="0">
-                </div><hr>
+                 <div class="top-form-group" style="display: flex; gap: 24px; align-items: center; margin-bottom: 24px;">
+                    <div>
+                        <label>Matriculados:</label><input type="number" id="matriculados" min="0" style="width: 120px;">
+                    </div>
+                    <div>
+                        <label>Evaluados:</label><input type="number" id="evaluados" min="0" style="width: 120px;">
+                    </div>
+                </div>
                 <div class="skills-header">
-                    <div>Conocimiento o Habilidad</div><div>Deficiente (0-10)</div><div>%</div>
-                    <div>Suficiente (11-15)</div><div>%</div><div>Bueno (16-20)</div>
+                    <div>Conocimiento</div><div>Deficiente</div><div>%</div>
+                    <div>Suficiente</div><div>%</div><div>Bueno</div>
                     <div>%</div><div>Total %</div><div></div>
                 </div>
                 <div id="skills-container"></div>
-                <div class="add-skill-container">
-                    <button id="addSkillBtn" class="btn btn-add-skill">Agregar Conocimiento</button>
+                <div class="add-skill-container" style="text-align: right; margin-top: 16px;">
+                    <button id="addSkillBtn" class="btn primary">Agregar Conocimiento</button>
                 </div>
                 <div id="validation-message"></div>
+                <hr>
                 <div class="corrective-measures">
-                    <h4>Medidas correctivas que ha tomado en los casos de grado "deficiente"</h4>
+                    <h4>Medidas correctivas tomadas</h4>
                     <div class="checkbox-grid">
                         <div class="checkbox-group"><input type="checkbox" id="repaso_clase"><label for="repaso_clase">1. Repaso en horas de clase</label></div>
                         <div class="checkbox-group"><input type="checkbox" id="entrega_material"><label for="entrega_material">4. Entrega de material de repaso</label></div>
@@ -227,15 +387,16 @@
                         <div class="checkbox-group"><input type="checkbox" id="ejercicios_casa"><label for="ejercicios_casa">3. Ejercicios para resolver en casa</label></div>
                         <div class="checkbox-group"><input type="checkbox" id="otros_check"><label for="otros_check">6. Otros (Detalle en descripción)</label></div>
                     </div>
-                    <div class="description-group">
-                        <label for="otros_descripcion">Describa otras medidas correctivas y/o recomendaciones:</label>
+                    <div class="description-group" style="margin-top: 20px;">
+                        <label for="otros_descripcion">Describa otras medidas y/o recomendaciones:</label>
                         <textarea id="otros_descripcion"></textarea>
                     </div>
-                    <div class="date-group">
+                    <div class="date-group" style="margin-top: 20px;">
                         <label for="fecha_informe">Fecha del Informe:</label>
-                        <input type="date" id="fecha_informe">
+                        <input type="date" id="fecha_informe" style="width: auto;">
                     </div>
                 </div>
+                <hr>
                 <div class="signature-section">
                     <h4>Firma del Docente</h4>
                     <div id="signature_pad_wrapper" class="signature-pad-wrapper">
@@ -245,14 +406,14 @@
                         <p><strong>Firma guardada:</strong></p>
                         <iframe id="existing_signature_iframe" src="" allow="autoplay"></iframe>
                     </div>
-                    <div class="signature-controls">
-                        <button id="clear_signature_btn" class="btn btn-secondary">Limpiar Firma</button>
+                    <div class="signature-controls" style="margin-top: 10px; display: flex; justify-content: flex-end;">
+                        <button id="clear_signature_btn" class="btn">Limpiar Firma</button>
                     </div>
                 </div>
             </div>
             <div class="modal-footer">
                 <div id="final-response"></div>
-                <button id="saveReportBtn" class="btn btn-save">Guardar Informe</button>
+                <button id="saveReportBtn" class="btn primary btn-save">Guardar Informe</button>
             </div>
         </div>
     </div>
@@ -261,149 +422,148 @@
     <div id="portfolioModal" class="modal-overlay">
         <div class="modal-content">
             <span class="modal-close">×</span>
-            <div class="modal-header"><h2 id="portfolioModalTitle"></h2></div>
+            <div class="modal-header">
+                <h2 id="portfolioModalTitle"></h2>
+                <div id="portfolioStatusIndicator" class="status-indicator"></div>
+            </div>
             <div class="modal-body">
                 <div id="portfolio-form-container">
                     <div class="portfolio-grid">
                         <div class="grid-header">Estudiantes</div>
                         <div class="grid-header">Cantidad</div>
                         <div class="grid-header">Porcentaje</div>
-                        <div class="grid-row">
+                        <div class="grid-row" style="grid-column: 1 / -1; display: contents;">
                             <label for="p_matriculados">Matriculados</label>
                             <input type="number" id="p_matriculados" min="0">
-                            <div class="percentage"><div class="progress-bar" id="p_matriculados_bar"></div><span id="p_matriculados_span"></span></div>
+                            <div class="percentage pct-bg-green"><span id="p_matriculados_span"></span></div>
                         </div>
-                        <div class="grid-row sub-group">
+                        <div class="grid-row sub-group" style="grid-column: 1 / -1; display: contents;">
                             <label>Retirados</label>
                             <input type="number" id="p_retirados" min="0">
-                            <div class="percentage"><span id="p_retirados_span"></span></div>
+                            <div class="percentage" style="background: transparent;"><span id="p_retirados_span"></span></div>
                         </div>
-                        <div class="grid-row sub-group">
+                        <div class="grid-row sub-group" style="grid-column: 1 / -1; display: contents;">
                             <label>Abandono</label>
                             <input type="number" id="p_abandono" min="0">
-                            <div class="percentage"><span id="p_abandono_span"></span></div>
+                            <div class="percentage" style="background: transparent;"><span id="p_abandono_span"></span></div>
                         </div>
-                        <div class="grid-row">
+                        <div class="grid-row" style="grid-column: 1 / -1; display: contents;">
                             <label>Asisten</label>
                             <input type="number" id="p_asisten" readonly>
-                            <div class="percentage"><div class="progress-bar" id="p_asisten_bar"></div><span id="p_asisten_span"></span></div>
+                            <div class="percentage"><span id="p_asisten_span"></span></div>
                         </div>
-                        <div class="grid-row sub-group">
+                        <div class="grid-row sub-group" style="grid-column: 1 / -1; display: contents;">
                              <label>Aprobados</label>
                             <input type="number" id="p_aprobados" min="0">
-                            <div class="percentage"><span id="p_aprobados_span"></span></div>
+                            <div class="percentage" style="background: transparent;"><span id="p_aprobados_span"></span></div>
                         </div>
-                        <div class="grid-row sub-group">
+                        <div class="grid-row sub-group" style="grid-column: 1 / -1; display: contents;">
                             <label>Desaprobados</label>
                             <input type="number" id="p_desaprobados" readonly>
-                            <div class="percentage"><span id="p_desaprobados_span"></span></div>
+                            <div class="percentage" style="background: transparent;"><span id="p_desaprobados_span"></span></div>
                         </div>
                     </div>
                     <div id="portfolioValidationMsg"></div>
                     <hr>
                     <h4>I. Material que el docente prepara y entrega</h4>
                     <div id="material-docente-container" class="material-grid">
-                        <div class="grid-header">Material Docente Entregado</div>
-                        <div class="grid-header">Digital</div>
-                        <div class="grid-header">Impreso</div>
-                        <div class="grid-header">Cantidad</div>
-                        <div class="grid-header">Evidencia (Archivo)</div>
+                        <div class="grid-header">Material Docente</div>
+                        <div class="grid-header">Dig</div><div class="grid-header">Imp</div>
+                        <div class="grid-header">Cant</div><div class="grid-header">Evidencia</div>
                         
                         <label>Sílabo formato UPT</label>
                         <input type="checkbox" id="dig_silabo_upt"><input type="checkbox" id="imp_silabo_upt">
                         <input type="number" id="cant_silabo_upt" min="0">
-                        <div class="file-upload-wrapper"><label for="file_silabo_upt" class="btn file-btn">Seleccionar archivo</label><input type="file" id="file_silabo_upt"><span class="file-name" id="fname_silabo_upt"></span></div>
+                        <div class="file-upload-wrapper"><label for="file_silabo_upt" class="btn file-btn">Adjuntar</label><input type="file" id="file_silabo_upt"><span class="file-name" id="fname_silabo_upt"></span></div>
                         
                         <label>Sílabo formato ICACIT</label>
                         <input type="checkbox" id="dig_silabo_icacit"><input type="checkbox" id="imp_silabo_icacit">
                         <input type="number" id="cant_silabo_icacit" min="0">
-                        <div class="file-upload-wrapper"><label for="file_silabo_icacit" class="btn file-btn">Seleccionar archivo</label><input type="file" id="file_silabo_icacit"><span class="file-name" id="fname_silabo_icacit"></span></div>
+                        <div class="file-upload-wrapper"><label for="file_silabo_icacit" class="btn file-btn">Adjuntar</label><input type="file" id="file_silabo_icacit"><span class="file-name" id="fname_silabo_icacit"></span></div>
 
                         <label>Curriculum Vitae formato ICACIT</label>
                         <input type="checkbox" id="dig_cv_icacit"><input type="checkbox" id="imp_cv_icacit">
                         <input type="number" id="cant_cv_icacit" min="0">
-                        <div class="file-upload-wrapper"><label for="file_cv_icacit" class="btn file-btn">Seleccionar archivo</label><input type="file" id="file_cv_icacit"><span class="file-name" id="fname_cv_icacit"></span></div>
+                        <div class="file-upload-wrapper"><label for="file_cv_icacit" class="btn file-btn">Adjuntar</label><input type="file" id="file_cv_icacit"><span class="file-name" id="fname_cv_icacit"></span></div>
 
                         <label>Material del Curso (Texto, Diapositivas)</label>
                         <input type="checkbox" id="dig_material_curso"><input type="checkbox" id="imp_material_curso">
                         <input type="number" id="cant_material_curso" min="0">
-                        <div class="file-upload-wrapper"><label for="file_material_curso" class="btn file-btn">Seleccionar archivo</label><input type="file" id="file_material_curso"><span class="file-name" id="fname_material_curso"></span></div>
+                        <div class="file-upload-wrapper"><label for="file_material_curso" class="btn file-btn">Adjuntar</label><input type="file" id="file_material_curso"><span class="file-name" id="fname_material_curso"></span></div>
 
                         <label>Guías de laboratorio y talleres</label>
                         <input type="checkbox" id="dig_guias_lab"><input type="checkbox" id="imp_guias_lab">
                         <input type="number" id="cant_guias_lab" min="0">
-                        <div class="file-upload-wrapper"><label for="file_guias_lab" class="btn file-btn">Seleccionar archivo</label><input type="file" id="file_guias_lab"><span class="file-name" id="fname_guias_lab"></span></div>
+                        <div class="file-upload-wrapper"><label for="file_guias_lab" class="btn file-btn">Adjuntar</label><input type="file" id="file_guias_lab"><span class="file-name" id="fname_guias_lab"></span></div>
 
                         <label>Enunciado y resolución de exámenes</label>
                         <input type="checkbox" id="dig_examenes"><input type="checkbox" id="imp_examenes">
                         <input type="number" id="cant_examenes" min="0">
-                        <div class="file-upload-wrapper"><label for="file_examenes" class="btn file-btn">Seleccionar archivo</label><input type="file" id="file_examenes"><span class="file-name" id="fname_examenes"></span></div>
+                        <div class="file-upload-wrapper"><label for="file_examenes" class="btn file-btn">Adjuntar</label><input type="file" id="file_examenes"><span class="file-name" id="fname_examenes"></span></div>
 
                         <label>Enunciado de las practicas o casos practicos</label>
                         <input type="checkbox" id="dig_practicas"><input type="checkbox" id="imp_practicas">
                         <input type="number" id="cant_practicas" min="0">
-                        <div class="file-upload-wrapper"><label for="file_practicas" class="btn file-btn">Seleccionar archivo</label><input type="file" id="file_practicas"><span class="file-name" id="fname_practicas"></span></div>
+                        <div class="file-upload-wrapper"><label for="file_practicas" class="btn file-btn">Adjuntar</label><input type="file" id="file_practicas"><span class="file-name" id="fname_practicas"></span></div>
                         
                         <label>Registro de Asistencia</label>
                         <input type="checkbox" id="dig_asistencia"><input type="checkbox" id="imp_asistencia">
                         <input type="number" id="cant_asistencia" min="0">
-                        <div class="file-upload-wrapper"><label for="file_asistencia" class="btn file-btn">Seleccionar archivo</label><input type="file" id="file_asistencia"><span class="file-name" id="fname_asistencia"></span></div>
+                        <div class="file-upload-wrapper"><label for="file_asistencia" class="btn file-btn">Adjuntar</label><input type="file" id="file_asistencia"><span class="file-name" id="fname_asistencia"></span></div>
                         
                         <label>Registro de Notas</label>
                         <input type="checkbox" id="dig_notas"><input type="checkbox" id="imp_notas">
                         <input type="number" id="cant_notas" min="0">
-                        <div class="file-upload-wrapper"><label for="file_notas" class="btn file-btn">Seleccionar archivo</label><input type="file" id="file_notas"><span class="file-name" id="fname_notas"></span></div>
+                        <div class="file-upload-wrapper"><label for="file_notas" class="btn file-btn">Adjuntar</label><input type="file" id="file_notas"><span class="file-name" id="fname_notas"></span></div>
 
                         <label>Fichas de evaluaciones (Rúbricas)</label>
                         <input type="checkbox" id="dig_evaluaciones"><input type="checkbox" id="imp_evaluaciones">
                         <input type="number" id="cant_evaluaciones" min="0">
-                        <div class="file-upload-wrapper"><label for="file_evaluaciones" class="btn file-btn">Seleccionar archivo</label><input type="file" id="file_evaluaciones"><span class="file-name" id="fname_evaluaciones"></span></div>
+                        <div class="file-upload-wrapper"><label for="file_evaluaciones" class="btn file-btn">Adjuntar</label><input type="file" id="file_evaluaciones"><span class="file-name" id="fname_evaluaciones"></span></div>
                     </div>
                     <hr>
                     <h4>II. Material generado por el estudiante</h4>
                      <div id="material-estudiante-container" class="material-grid">
-                        <div class="grid-header">Material Generado por Estudiante</div>
-                        <div class="grid-header">Digital</div>
-                        <div class="grid-header">Impreso</div>
-                        <div class="grid-header">Cantidad</div>
-                        <div class="grid-header">Evidencia (Archivo)</div>
+                        <div class="grid-header">Material Estudiante</div>
+                        <div class="grid-header">Dig</div><div class="grid-header">Imp</div>
+                        <div class="grid-header">Cant</div><div class="grid-header">Evidencia</div>
 
                         <label>Copias de cuadernos o apuntes</label>
                         <input type="checkbox" id="dig_est_cuadernos"><input type="checkbox" id="imp_est_cuadernos">
                         <input type="number" id="cant_est_cuadernos" min="0">
-                        <div class="file-upload-wrapper"><label for="file_est_cuadernos" class="btn file-btn">Seleccionar archivo</label><input type="file" id="file_est_cuadernos"><span class="file-name" id="fname_est_cuadernos"></span></div>
+                        <div class="file-upload-wrapper"><label for="file_est_cuadernos" class="btn file-btn">Adjuntar</label><input type="file" id="file_est_cuadernos"><span class="file-name" id="fname_est_cuadernos"></span></div>
 
                         <label>Original de exámenes de unidad</label>
                         <input type="checkbox" id="dig_est_examenes"><input type="checkbox" id="imp_est_examenes">
                         <input type="number" id="cant_est_examenes" min="0">
-                        <div class="file-upload-wrapper"><label for="file_est_examenes" class="btn file-btn">Seleccionar archivo</label><input type="file" id="file_est_examenes"><span class="file-name" id="fname_est_examenes"></span></div>
+                        <div class="file-upload-wrapper"><label for="file_est_examenes" class="btn file-btn">Adjuntar</label><input type="file" id="file_est_examenes"><span class="file-name" id="fname_est_examenes"></span></div>
 
                         <label>Original de evaluaciones practicas</label>
                         <input type="checkbox" id="dig_est_eval_practicas"><input type="checkbox" id="imp_est_eval_practicas">
                         <input type="number" id="cant_est_eval_practicas" min="0">
-                        <div class="file-upload-wrapper"><label for="file_est_eval_practicas" class="btn file-btn">Seleccionar archivo</label><input type="file" id="file_est_eval_practicas"><span class="file-name" id="fname_est_eval_practicas"></span></div>
+                        <div class="file-upload-wrapper"><label for="file_est_eval_practicas" class="btn file-btn">Adjuntar</label><input type="file" id="file_est_eval_practicas"><span class="file-name" id="fname_est_eval_practicas"></span></div>
 
                         <label>Original de informes de laboratorios</label>
                         <input type="checkbox" id="dig_est_inf_lab"><input type="checkbox" id="imp_est_inf_lab">
                         <input type="number" id="cant_est_inf_lab" min="0">
-                        <div class="file-upload-wrapper"><label for="file_est_inf_lab" class="btn file-btn">Seleccionar archivo</label><input type="file" id="file_est_inf_lab"><span class="file-name" id="fname_est_inf_lab"></span></div>
+                        <div class="file-upload-wrapper"><label for="file_est_inf_lab" class="btn file-btn">Adjuntar</label><input type="file" id="file_est_inf_lab"><span class="file-name" id="fname_est_inf_lab"></span></div>
 
                         <label>Trabajos encargado (investigación, etc.)</label>
                         <input type="checkbox" id="dig_est_trabajos"><input type="checkbox" id="imp_est_trabajos">
                         <input type="number" id="cant_est_trabajos" min="0">
-                        <div class="file-upload-wrapper"><label for="file_est_trabajos" class="btn file-btn">Seleccionar archivo</label><input type="file" id="file_est_trabajos"><span class="file-name" id="fname_est_trabajos"></span></div>
+                        <div class="file-upload-wrapper"><label for="file_est_trabajos" class="btn file-btn">Adjuntar</label><input type="file" id="file_est_trabajos"><span class="file-name" id="fname_est_trabajos"></span></div>
 
                         <label>Trabajos y/o proyectos finales</label>
                         <input type="checkbox" id="dig_est_proyectos"><input type="checkbox" id="imp_est_proyectos">
                         <input type="number" id="cant_est_proyectos" min="0">
-                        <div class="file-upload-wrapper"><label for="file_est_proyectos" class="btn file-btn">Seleccionar archivo</label><input type="file" id="file_est_proyectos"><span class="file-name" id="fname_est_proyectos"></span></div>
+                        <div class="file-upload-wrapper"><label for="file_est_proyectos" class="btn file-btn">Adjuntar</label><input type="file" id="file_est_proyectos"><span class="file-name" id="fname_est_proyectos"></span></div>
                     </div>
                     <hr>
-                    <div class="date-group">
+                    <div class="date-group" style="margin-top: 20px;">
                         <label for="fecha_entrega_portfolio">Fecha de Entrega:</label>
-                        <input type="date" id="fecha_entrega_portfolio">
+                        <input type="date" id="fecha_entrega_portfolio" style="width: auto;">
                     </div>
-                    <div class="signature-section">
+                    <div class="signature-section" style="margin-top: 24px;">
                         <h4>Firma del Docente</h4>
                         <div id="signature_pad_wrapper_portfolio" class="signature-pad-wrapper">
                             <canvas id="signature_canvas_portfolio"></canvas>
@@ -412,15 +572,15 @@
                             <p><strong>Firma guardada:</strong></p>
                             <iframe id="existing_signature_iframe_portfolio" src="" allow="autoplay"></iframe>
                         </div>
-                        <div class="signature-controls">
-                            <button id="clear_signature_btn_portfolio" class="btn btn-secondary">Limpiar Firma</button>
+                        <div class="signature-controls" style="margin-top: 10px; display: flex; justify-content: flex-end;">
+                            <button id="clear_signature_btn_portfolio" class="btn">Limpiar Firma</button>
                         </div>
                     </div>
                 </div>
             </div>
             <div class="modal-footer">
                 <div id="final-response-portfolio"></div>
-                <button id="savePortfolioBtn" class="btn btn-save">Guardar Datos</button>
+                <button id="savePortfolioBtn" class="btn primary btn-save">Guardar Datos</button>
             </div>
         </div>
     </div>
@@ -431,7 +591,7 @@
             <span class="modal-close">×</span>
             <div class="modal-header"><h2 id="docPortfolioModalTitle"></h2></div>
             <div class="modal-body">
-                <div id="doc-portfolio-form-container" class="doc-grid">
+                <div id="doc-portfolio-form-container">
                     <!-- Las filas se generarán dinámicamente con JavaScript -->
                 </div>
                  <hr>
@@ -444,14 +604,14 @@
                         <p><strong>Firma guardada:</strong></p>
                         <iframe id="existing_signature_iframe_doc" src="" allow="autoplay"></iframe>
                     </div>
-                    <div class="signature-controls">
-                        <button id="clear_signature_btn_doc" class="btn btn-secondary">Limpiar Firma</button>
+                    <div class="signature-controls" style="margin-top: 10px; display: flex; justify-content: flex-end;">
+                        <button id="clear_signature_btn_doc" class="btn">Limpiar Firma</button>
                     </div>
                 </div>
             </div>
             <div class="modal-footer">
                 <div id="final-response-doc-portfolio"></div>
-                <button id="saveDocPortfolioBtn" class="btn btn-save">Guardar Documentación</button>
+                <button id="saveDocPortfolioBtn" class="btn primary btn-save">Guardar Documentación</button>
             </div>
         </div>
     </div>
@@ -459,9 +619,8 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.0.0/dist/signature_pad.umd.min.js"></script>
     <script>
-        const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwd1NieDXm5TWidPBVHP4xGF7rmmaq-CH5k6Cs9pMJjvdjdRbAb8Drt5KVzTsNaoUjy/exec";
+        const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxcIpjkcdAOeFJWH7IJPVL59_yEhIdkNbGm94jZ8_xCQxgDOkuJyBDxIijsLUhhMlEr/exec";
         
-        // --- Selectores del DOM ---
         const semesterModal = document.getElementById('semesterModal');
         const semesterSelector = document.getElementById('semesterSelector');
         const loadSemesterBtn = document.getElementById('loadSemesterBtn');
@@ -477,9 +636,9 @@
         const teacherDetailsDiv = document.getElementById('teacher-details');
         const coursesResultsDiv = document.getElementById('courses-results');
         
-        // --- Selectores Modal Prueba de Entrada ---
         const reportModal = document.getElementById('reportModal');
         const modalTitle = document.getElementById('modalTitle');
+        const entryTestStatusIndicator = document.getElementById('entryTestStatusIndicator');
         const matriculadosInput = document.getElementById('matriculados');
         const evaluadosInput = document.getElementById('evaluados');
         const skillsContainer = document.getElementById('skills-container');
@@ -501,10 +660,10 @@
         const saveReportBtn = document.getElementById('saveReportBtn');
         const finalResponseDiv = document.getElementById('final-response');
 
-        // --- Selectores Modal Portafolio ---
         const portfolioModal = document.getElementById('portfolioModal');
         const portfolioFormContainer = document.getElementById('portfolio-form-container');
         const portfolioModalTitle = document.getElementById('portfolioModalTitle');
+        const portfolioStatusIndicator = document.getElementById('portfolioStatusIndicator');
         const savePortfolioBtn = document.getElementById('savePortfolioBtn');
         const p_matriculados = document.getElementById('p_matriculados');
         const p_retirados = document.getElementById('p_retirados');
@@ -521,7 +680,6 @@
         const existingSignatureWrapperPortfolio = document.getElementById('existing_signature_wrapper_portfolio');
         const existingSignatureIframePortfolio = document.getElementById('existing_signature_iframe_portfolio');
 
-        // --- Selectores Modal Documentación Portafolio ---
         const docPortfolioModal = document.getElementById('docPortfolioModal');
         const docPortfolioFormContainer = document.getElementById('doc-portfolio-form-container');
         const docPortfolioModalTitle = document.getElementById('docPortfolioModalTitle');
@@ -533,7 +691,6 @@
         const existingSignatureWrapperDoc = document.getElementById('existing_signature_wrapper_doc');
         const existingSignatureIframeDoc = document.getElementById('existing_signature_iframe_doc');
 
-        // --- Variables de Estado ---
         let allTeachers = [];
         let currentCourseData = {};
         let currentTeacherData = {};
@@ -547,58 +704,63 @@
         let portfolioSignaturePad;
         let docPortfolioSignaturePad;
         let refreshOnClose = false;
+        
         const materialKeys = [
             'silabo_upt', 'silabo_icacit', 'cv_icacit', 'material_curso', 'guias_lab', 'examenes', 'practicas', 'asistencia', 'notas', 'evaluaciones',
             'est_cuadernos', 'est_examenes', 'est_eval_practicas', 'est_inf_lab', 'est_trabajos', 'est_proyectos'
         ];
-        const docPortfolioKeys = [
-            { category: '1. Información General', items: [ { key: 'cv_personal', label: 'Curriculum Personal' }, { key: 'cv_icacit', label: 'Curriculum ICACIT'}] },
-            { category: '2. Prueba de Entrada', items: [ { key: 'examen_entrada', label: 'Examen' }, { key: 'notas_entrada', label: 'Notas' }] },
-            { category: '2. Silabos', items: [ { key: 'silabo_upt', label: 'Silabo UPT' }, { key: 'silabo_icacit', label: 'Silabo ICACIT' }] },
-            { category: '3. I Unidad', items: [
-                { key: 'notas_u1', label: 'Notas Asistencia' },
-                { key: 'solucion_examen_u1', label: '3.1 Recursos Docente: Solución Examen', sub: true },
-                { key: 'presentaciones_u1', label: 'Presentaciones (Diapositivas)', sub: true },
-                { key: 'guias_lab_u1', label: 'Guias de Laboratorios', sub: true },
-                { key: 'otros_recursos_docente_u1', label: 'Otros Recursos', sub: true },
-                { key: 'examenes_estudiante_u1', label: '3.2 Recursos Estudiante: Examenes', sub: true },
-                { key: 'practicas_calificadas_u1', label: 'Practicas Calificadas', sub: true },
-                { key: 'proyecto_final_u1', label: 'Proyecto Final', sub: true },
-                { key: 'otros_recursos_estudiante_u1', label: 'Otros Recursos', sub: true }
-            ]},
-            { category: '4. II Unidad', items: [
-                { key: 'notas_u2', label: 'Notas Asistencia' },
-                { key: 'solucion_examen_u2', label: '4.1 Recursos Docente: Solución Examen', sub: true },
-                { key: 'presentaciones_u2', label: 'Presentaciones (Diapositivas)', sub: true },
-                { key: 'guias_lab_u2', label: 'Guias de Laboratorios', sub: true },
-                { key: 'otros_recursos_docente_u2', label: 'Otros Recursos', sub: true },
-                { key: 'examenes_estudiante_u2', label: '4.2 Recursos Estudiante: Examenes', sub: true },
-                { key: 'practicas_calificadas_u2', label: 'Practicas Calificadas', sub: true },
-                { key: 'proyecto_final_u2', label: 'Proyecto Final', sub: true },
-                { key: 'otros_recursos_estudiante_u2', label: 'Otros Recursos', sub: true }
-            ]},
-            { category: '5. III Unidad', items: [
-                { key: 'notas_u3', label: 'Notas Asistencia' },
-                { key: 'solucion_examen_u3', label: '5.1 Recursos Docente: Solución Examen', sub: true },
-                { key: 'presentaciones_u3', label: 'Presentaciones (Diapositivas)', sub: true },
-                { key: 'guias_lab_u3', label: 'Guias de Laboratorios', sub: true },
-                { key: 'otros_recursos_docente_u3', label: 'Otros Recursos', sub: true },
-                { key: 'examenes_estudiante_u3', label: '5.2 Recursos Estudiante: Examenes', sub: true },
-                { key: 'practicas_calificadas_u3', label: 'Practicas Calificadas', sub: true },
-                { key: 'proyecto_final_u3', label: 'Proyecto Final', sub: true },
-                { key: 'p1_documentacion', label: '3.1 Proyecto: Sistema Matricula - Documentación', subSub: true },
-                { key: 'p1_software', label: 'Software', subSub: true },
-                { key: 'p1_anexos', label: 'Anexos', subSub: true },
-                { key: 'p1_video', label: 'Video', subSub: true },
-                { key: 'p2_documentacion', label: '5.3 Proyecto: Sistema Inventario - Documentación', subSub: true },
-                { key: 'p2_software', label: 'Software', subSub: true },
-                { key: 'p2_anexos', label: 'Anexos', subSub: true },
-                { key: 'p2_video', label: 'Video', subSub: true },
-                { key: 'otros_recursos_estudiante_u3', label: 'Otros Recursos', sub: true }
-            ]}
-        ];
 
-        // --- Inicialización y Eventos Principales ---
+        const docPortfolioStructure = [
+            { type: 'category', label: '1. Información General' },
+            { type: 'item', key: 'url_cv_personal', label: 'Curriculum Personal' },
+            { type: 'item', key: 'url_cv_icacit', label: 'Curriculum ICACIT' },
+            { type: 'category', label: '2. Prueba de Entrada' },
+            { type: 'item', key: 'url_examen_entrada', label: 'Examen' },
+            { type: 'item', key: 'url_notas_entrada', label: 'Notas' },
+            { type: 'category', label: '3. Sílabos' },
+            { type: 'item', key: 'url_silabo_upt', label: 'Silabo UPT' },
+            { type: 'item', key: 'url_silabo_icacit', label: 'Silabo ICACIT' },
+            { type: 'category', label: '4. Unidad I' },
+            { type: 'subcategory', label: '4.1. Notas Asistencia' },
+            { type: 'item', key: 'url_notas_u1', label: 'Notas (U1)' },
+            { type: 'subcategory', label: '4.2. Recursos Docente' },
+            { type: 'item', key: 'url_solucion_examen_u1', label: 'Solución Examen (U1)' },
+            { type: 'item', key: 'url_presentaciones_u1', label: 'Presentaciones (Diapositivas) (U1)' },
+            { type: 'item', key: 'url_guias_lab_u1', label: 'Guías de Laboratorios (U1)' },
+            { type: 'item', key: 'url_otros_recursos_docente_u1', label: 'Otros Recursos (U1)' },
+            { type: 'subcategory', label: '4.3. Recursos Estudiante' },
+            { type: 'item', key: 'url_examenes_estudiante_u1', label: 'Examenes (U1)' },
+            { type: 'item', key: 'url_practicas_calificadas_u1', label: 'Practicas Calificadas (U1)' },
+            { type: 'item', key: 'url_proyecto_final_u1', label: 'Proyecto Final (U1)' },
+            { type: 'item', key: 'url_otros_recursos_estudiante_u1', label: 'Otros Recursos (U1)' },
+            { type: 'category', label: '5. Unidad II' },
+            { type: 'subcategory', label: '4.1. Notas Asistencia' },
+            { type: 'item', key: 'url_notas_u2', label: 'Notas (U2)' },
+            { type: 'subcategory', label: '4.2. Recursos Docente' },
+            { type: 'item', key: 'url_solucion_examen_u2', label: 'Solución Examen (U2)' },
+            { type: 'item', key: 'url_presentaciones_u2', label: 'Presentaciones (Diapositivas) (U2)' },
+            { type: 'item', key: 'url_guias_lab_u2', label: 'Guías de Laboratorios (U2)' },
+            { type: 'item', key: 'url_otros_recursos_docente_u2', label: 'Otros Recursos (U2)' },
+            { type: 'subcategory', label: '4.3. Recursos Estudiante' },
+            { type: 'item', key: 'url_examenes_estudiante_u2', label: 'Examenes (U2)' },
+            { type: 'item', key: 'url_practicas_calificadas_u2', label: 'Practicas Calificadas (U2)' },
+            { type: 'item', key: 'url_proyecto_final_u2', label: 'Proyecto Final (U2)' },
+            { type: 'item', key: 'url_otros_recursos_estudiante_u2', label: 'Otros Recursos (U2)' },
+            { type: 'category', label: '6. Unidad III' },
+            { type: 'subcategory', label: '4.1. Notas Asistencia' },
+            { type: 'item', key: 'url_notas_u3', label: 'Notas (U3)' },
+            { type: 'subcategory', label: '4.2. Recursos Docente' },
+            { type: 'item', key: 'url_solucion_examen_u3', label: 'Solución Examen (U3)' },
+            { type: 'item', key: 'url_presentaciones_u3', label: 'Presentaciones (Diapositivas) (U3)' },
+            { type: 'item', key: 'url_guias_lab_u3', label: 'Guías de Laboratorios (U3)' },
+            { type: 'item', key: 'url_otros_recursos_docente_u3', label: 'Otros Recursos (U3)' },
+            { type: 'subcategory', label: '4.3. Recursos Estudiante' },
+            { type: 'item', key: 'url_examenes_estudiante_u3', label: 'Examenes (U3)' },
+            { type: 'item', key: 'url_practicas_calificadas_u3', label: 'Practicas Calificadas (U3)' },
+            { type: 'item', key: 'url_otros_recursos_estudiante_u3', label: 'Otros Recursos' },
+            { type: 'project_section', label: '4.3.1. Proyecto Final (U3)'}
+        ];
+        
         function resizeCanvas(canvas, pad) {
             if (!pad) return;
             const ratio =  Math.max(window.devicePixelRatio || 1, 1);
@@ -739,7 +901,7 @@
 
         async function performSearch(teacherName) {
             searchLoader.style.display = 'flex';
-            searchLoader.innerHTML = `<div class="spinner"></div><h2>Buscando...</h2>`;
+            searchLoader.innerHTML = `<div class="spinner"></div><h2>Buscando datos del docente...</h2>`;
             teacherDetailsDiv.innerHTML = ''; 
             coursesResultsDiv.innerHTML = '';
             try {
@@ -758,12 +920,58 @@
                 } else { throw new Error(result.message); }
             } catch (error) { 
                 searchLoader.style.display = 'none'; 
-                coursesResultsDiv.innerHTML = `<p class="message" style="color:red;font-weight:bold;">${error.message}</p>`; 
+                coursesResultsDiv.innerHTML = `<p class="message" style="color:var(--danger-color);font-weight:bold;">${error.message}</p>`; 
             }
         }
 
         function displayTeacherDetails(details) { 
-            teacherDetailsDiv.innerHTML = details ? `<h2>${details.NombreCompleto || ''}</h2><p><strong>Grado:</strong> ${details.GradoAcademico || 'N/A'}</p><p><strong>Correo:</strong> ${details.CorreoElectronico || 'N/A'}</p>` : `<p class="message">No se encontraron detalles para este docente.</p>`; 
+            teacherDetailsDiv.innerHTML = details ? `<h2>${details.NombreCompleto || ''}</h2><p><strong>Grado:</strong> ${details.GradoAcademico || 'N/A'}<span>&nbsp;&nbsp;•&nbsp;&nbsp;</span><strong>Correo:</strong> ${details.CorreoElectronico || 'N/A'}</p>` : `<p class="message">No se encontraron detalles para este docente.</p>`; 
+        }
+
+        function isEntryTestTrulyComplete(reportInfo) {
+            if (!reportInfo || !reportInfo.skills || reportInfo.skills.length === 0 || !reportInfo.evaluados || reportInfo.evaluados <= 0) {
+                return false;
+            }
+            const totalEvaluados = parseInt(reportInfo.evaluados);
+            for (const skill of reportInfo.skills) {
+                const sumaFila = (parseInt(skill.deficiente_cantidad) || 0) + 
+                                 (parseInt(skill.suficiente_cantidad) || 0) + 
+                                 (parseInt(skill.bueno_cantidad) || 0);
+                if (sumaFila !== totalEvaluados) {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        function isPortfolioTrulyComplete(reportInfo) {
+            if (!reportInfo) return false;
+            
+            const matriculados = parseInt(reportInfo.matriculados) || 0;
+            const retirados = parseInt(reportInfo.retirados) || 0;
+            const abandono = parseInt(reportInfo.abandono) || 0;
+            const aprobados = reportInfo.aprobados;
+            const asisten = matriculados - retirados - abandono;
+            const desaprobados = asisten - (parseInt(aprobados) || 0);
+            if (matriculados <= 0 || asisten < 0 || desaprobados < 0 || aprobados === undefined || aprobados === null || aprobados === '') return false;
+
+            const docenteObligatorios = ['silabo_upt', 'silabo_icacit', 'cv_icacit', 'material_curso', 'guias_lab', 'examenes', 'asistencia', 'notas'];
+            for (const key of docenteObligatorios) {
+                const hasCheck = reportInfo[`dig_${key}`] || reportInfo[`imp_${key}`];
+                const hasCant = (parseInt(reportInfo[`cant_${key}`]) || 0) > 0;
+                const hasUrl = !!reportInfo[`url_${key}`];
+                if (!hasCheck || !hasCant || !hasUrl) return false;
+            }
+
+            const estudianteObligatorios = ['est_examenes', 'est_proyectos'];
+            for (const key of estudianteObligatorios) {
+                 const hasCheck = reportInfo[`dig_${key}`] || reportInfo[`imp_${key}`];
+                 const hasCant = (parseInt(reportInfo[`cant_${key}`]) || 0) > 0;
+                 const hasUrl = !!reportInfo[`url_${key}`];
+                 if (!hasCheck || !hasCant || !hasUrl) return false;
+            }
+            
+            return true;
         }
 
         function displayCourses(courses, teacherName) {
@@ -784,31 +992,40 @@
                     const entryReportInfo = existingEntryReports[reportId];
                     if (entryReportInfo) {
                         card.dataset.entryReportInfo = JSON.stringify(entryReportInfo);
-                        if (entryReportInfo.isComplete) {
-                            buttonsHtml += `<a href="${entryReportInfo.url}" target="_blank" class="btn btn-entry-done">Informe Completado</a><button class="btn btn-entry-pending btn-edit" data-report-type="entryTest">Editar</button>`;
+                        const isComplete = isEntryTestTrulyComplete(entryReportInfo);
+                        if (isComplete) {
+                            buttonsHtml += `<button class="btn btn-state-completed" data-report-type="entryTest">Informe Completado</button>`;
                         } else {
-                            buttonsHtml += `<button class="btn btn-entry-pending btn-edit" data-report-type="entryTest">Informe Pendiente</button><a href="${entryReportInfo.url}" target="_blank" class="btn btn-secondary">Ver Archivo</a>`;
+                            buttonsHtml += `<button class="btn btn-state-pending" data-report-type="entryTest">Informe Pendiente</button>`;
                         }
+                        if(entryReportInfo.url) buttonsHtml += `<a href="${entryReportInfo.url}" target="_blank" class="btn">Ver PDF</a>`;
                     } else {
-                        buttonsHtml += `<button class="btn btn-entry-new" data-report-type="entryTest">Hacer Informe</button>`;
+                        buttonsHtml += `<button class="btn btn-state-new" data-report-type="entryTest">Hacer Informe</button>`;
                     }
                 } else if (selectedReportType.startsWith('portfolio_')) {
                     const unit = selectedReportType.split('_')[1];
                     const reportId = `${selectedSemester}-${course.codigo}-${course.seccion}-${unit}`;
                     const portfolioReportInfo = existingPortfolioReports[reportId];
-
-                    if (portfolioReportInfo && portfolioReportInfo.url) {
+                    if (portfolioReportInfo) {
                         card.dataset.portfolioReportInfo = JSON.stringify(portfolioReportInfo);
-                        buttonsHtml += `<a href="${portfolioReportInfo.url}" target="_blank" class="btn btn-secondary">Ver Archivo</a><button class="btn btn-portfolio-done btn-edit" data-report-type="${selectedReportType}">Editar</button>`;
+                        const isComplete = isPortfolioTrulyComplete(portfolioReportInfo);
+                        if (isComplete) {
+                             buttonsHtml += `<button class="btn btn-state-completed" data-report-type="${selectedReportType}">Portafolio Completado</button>`;
+                        } else {
+                             buttonsHtml += `<button class="btn btn-state-pending" data-report-type="${selectedReportType}">Portafolio Pendiente</button>`;
+                        }
+                        if (portfolioReportInfo.url) {
+                            buttonsHtml += `<a href="${portfolioReportInfo.url}" target="_blank" class="btn">Ver Archivo</a>`;
+                        }
                     } else {
-                        buttonsHtml += `<button class="btn btn-portfolio-new" data-report-type="${selectedReportType}">Portafolio: Registrar</button>`;
+                         buttonsHtml += `<button class="btn btn-state-new" data-report-type="${selectedReportType}">Hacer Portafolio (U${unit})</button>`;
                     }
                 } else if (selectedReportType === 'docPortfolio') {
                     const reportId = `${selectedSemester}-${course.codigo}-${course.seccion}`;
                     const docPortfolioReportInfo = existingDocPortfolioReports[reportId];
-                    if (docPortfolioReportInfo && docPortfolioReportInfo.url) {
+                    if (docPortfolioReportInfo && docPortfolioReportInfo.URL_Informe) {
                         card.dataset.docPortfolioReportInfo = JSON.stringify(docPortfolioReportInfo);
-                        buttonsHtml += `<a href="${docPortfolioReportInfo.url}" target="_blank" class="btn btn-secondary">Ver Documentación</a><button class="btn btn-doc-portfolio-done btn-edit" data-report-type="docPortfolio">Editar</button>`;
+                         buttonsHtml += `<button class="btn primary" data-report-type="docPortfolio">Editar Documentación</button><a href="${docPortfolioReportInfo.URL_Informe}" target="_blank" class="btn">Ver Archivo</a>`;
                     } else {
                         buttonsHtml += `<button class="btn btn-doc-portfolio-new" data-report-type="docPortfolio">Registrar Documentación</button>`;
                     }
@@ -816,19 +1033,20 @@
 
                 card.innerHTML = `
                     <h3>${course.codigo} - ${course.nombre}</h3>
-                    <p><strong>Sección:</strong> ${course.seccion}</p>
+                    <p style="color: var(--text-secondary); margin-top: -8px; margin-bottom: 16px;"><strong>Sección:</strong> ${course.seccion}</p>
                     <div class="details-grid">
                         <div class="detail-item"><strong>Ciclo:</strong> ${course.ciclo}</div><div class="detail-item"><strong>Horas:</strong> ${course.horas}</div>
                         <div class="detail-item"><strong>Créditos:</strong> ${course.creditos}</div><div class="detail-item"><strong>Tipo:</strong> ${course.tipo}</div>
-                        <div class="detail-item" style="grid-column: span 2;"><strong>Área Académica:</strong> ${course.area}</div>
+                        <div class="detail-item" style="grid-column: span 2;"><strong>Área:</strong> ${course.area}</div>
                     </div>
+                    <div style="flex-grow: 1;"></div>
                     <div class="card-buttons">${buttonsHtml}</div>`;
                 coursesResultsDiv.appendChild(card);
             });
         }
         
         coursesResultsDiv.addEventListener('click', e => {
-            const button = e.target.closest('.btn-edit, .btn-entry-new, .btn-portfolio-new, .btn-doc-portfolio-new');
+            const button = e.target.closest('button[data-report-type]');
             if (!button) return;
             
             const card = button.closest('.course-card');
@@ -850,14 +1068,12 @@
             }
         });
 
-        // --- Lógica de Modales ---
         function openReportModal(reportInfo) {
             const isEditing = !!reportInfo;
             currentReportId = isEditing ? `${selectedSemester}-${currentCourseData.codigo}-${currentCourseData.seccion}` : null;
             
-            // --- AJUSTE DE TÍTULO ---
-            modalTitle.innerHTML = `${(isEditing ? 'Editar' : 'Nuevo')} Informe: ${currentCourseData.codigo} - ${currentCourseData.nombre} (Sección ${currentCourseData.seccion})
-                                  <br><small>Docente: <strong>${currentTeacherData.NombreCompleto}</strong></small>`;
+            modalTitle.innerHTML = `Informe de Prueba de Entrada
+                                  <small>${currentCourseData.codigo} - ${currentCourseData.nombre} (Sección ${currentCourseData.seccion})<br><b>Docente:</b> ${currentTeacherData.NombreCompleto}</small>`;
             
             reportModal.style.display = 'flex';
             
@@ -869,17 +1085,19 @@
             skillsContainer.innerHTML = '';
             finalResponseDiv.innerHTML = '';
             saveReportBtn.style.display = 'block';
-            addSkillBtn.style.display = 'block';
+            addSkillBtn.style.display = 'inline-flex';
 
-            // --- AJUSTE DE BOTÓN ---
             saveReportBtn.innerHTML = isEditing ? 'Actualizar Informe' : 'Guardar Informe';
             saveReportBtn.disabled = false;
 
             matriculadosInput.value = isEditing ? reportInfo.matriculados : '';
             evaluadosInput.value = isEditing ? reportInfo.evaluados : '';
 
-            if (isEditing && reportInfo.skills && reportInfo.skills.length > 0) { reportInfo.skills.forEach(skill => addSkillRow(skill)); } 
-            else { addSkillRow(); }
+            if (isEditing && reportInfo.skills && reportInfo.skills.length > 0 && reportInfo.skills[0].name) { 
+                reportInfo.skills.forEach(skill => addSkillRow(skill)); 
+            } else { 
+                addSkillRow(); 
+            }
 
             const corrective = isEditing ? reportInfo.correctiveMeasures : {};
             chkRepasoClase.checked = corrective.repaso_clase || false;
@@ -910,9 +1128,8 @@
             const isEditing = !!reportInfo;
             currentReportId = isEditing ? `${selectedSemester}-${currentCourseData.codigo}-${currentCourseData.seccion}-${unit}` : null;
             
-            // --- AJUSTE DE TÍTULO ---
-            portfolioModalTitle.innerHTML = `${isEditing ? 'Editar' : 'Registrar'} Portafolio (Unidad ${unit}): ${currentCourseData.nombre} (${currentCourseData.seccion})
-                                           <br><small>Docente: <strong>${currentTeacherData.NombreCompleto}</strong></small>`;
+            portfolioModalTitle.innerHTML = `Portafolio (Unidad ${unit})
+                                           <small>${currentCourseData.nombre} (${currentCourseData.seccion})<br><b>Docente:</b> ${currentTeacherData.NombreCompleto}</small>`;
             
             portfolioModal.style.display = 'flex';
             
@@ -924,22 +1141,29 @@
             p_matriculados.value = isEditing ? reportInfo.matriculados : '';
             p_retirados.value = isEditing ? reportInfo.retirados : '';
             p_abandono.value = isEditing ? reportInfo.abandono : '';
-            p_aprobados.value = isEditing ? reportInfo.aprobados : '';
-            inputFechaPortfolio.value = isEditing ? (reportInfo.fecha_entrega_informe ? new Date(reportInfo.fecha_entrega_informe).toISOString().split('T')[0] : new Date().toISOString().split('T')[0]) : new Date().toISOString().split('T')[0];
+            p_aprobados.value = (isEditing && reportInfo.aprobados !== undefined) ? reportInfo.aprobados : '';
+            inputFechaPortfolio.value = isEditing ? (reportInfo.fecha_entrega ? new Date(reportInfo.fecha_entrega).toISOString().split('T')[0] : new Date().toISOString().split('T')[0]) : new Date().toISOString().split('T')[0];
             
             materialKeys.forEach(key => {
-                document.getElementById(`dig_${key}`).checked = isEditing && reportInfo[`dig_${key}`];
-                document.getElementById(`imp_${key}`).checked = isEditing && reportInfo[`imp_${key}`];
-                document.getElementById(`cant_${key}`).value = isEditing ? reportInfo[`cant_${key}`] || '' : '';
-                
+                const digEl = document.getElementById(`dig_${key}`);
+                const impEl = document.getElementById(`imp_${key}`);
+                const cantEl = document.getElementById(`cant_${key}`);
                 const fileInput = document.getElementById(`file_${key}`);
                 const fileNameSpan = document.getElementById(`fname_${key}`);
-                fileInput.value = '';
-                if (isEditing && reportInfo[`url_${key}`]) {
-                    const url = reportInfo[`url_${key}`];
-                    fileNameSpan.innerHTML = `<a href="${url}" target="_blank">Ver Evidencia</a>`;
-                } else {
-                    fileNameSpan.textContent = 'No hay archivo.';
+
+                if(digEl) digEl.checked = isEditing && reportInfo[`dig_${key}`];
+                if(impEl) impEl.checked = isEditing && reportInfo[`imp_${key}`];
+                if(cantEl) cantEl.value = isEditing ? reportInfo[`cant_${key}`] || '' : '';
+                
+                if(fileInput) fileInput.value = '';
+                if(fileNameSpan) {
+                     if (isEditing && reportInfo[`url_${key}`]) {
+                        fileNameSpan.innerHTML = `<a href="${reportInfo[`url_${key}`]}" target="_blank">Ver Evidencia</a>`;
+                        fileNameSpan.classList.add('file-name-filled');
+                    } else {
+                        fileNameSpan.textContent = 'Ningún archivo.';
+                        fileNameSpan.classList.remove('file-name-filled');
+                    }
                 }
             });
             
@@ -957,21 +1181,19 @@
 
             finalResponsePortfolioDiv.innerHTML = '';
             savePortfolioBtn.style.display = 'block';
-            
-            // --- AJUSTE DE BOTÓN ---
             savePortfolioBtn.innerHTML = isEditing ? 'Actualizar Datos' : 'Guardar Datos';
             savePortfolioBtn.disabled = false;
             
             calculatePortfolio();
+            updatePortfolioStatusIndicator();
         }
 
         function openDocPortfolioModal(reportInfo) {
             const isEditing = !!reportInfo;
             currentReportId = isEditing ? `${selectedSemester}-${currentCourseData.codigo}-${currentCourseData.seccion}` : null;
             
-            // --- AJUSTE DE TÍTULO ---
-            docPortfolioModalTitle.innerHTML = `${isEditing ? 'Editar' : 'Registrar'} Documentación del Portafolio: ${currentCourseData.nombre} (${currentCourseData.seccion})
-                                              <br><small>Docente: <strong>${currentTeacherData.NombreCompleto}</strong></small>`;
+            docPortfolioModalTitle.innerHTML = `Documentación del Portafolio
+                                              <small>${currentCourseData.nombre} (${currentCourseData.seccion})<br><b>Docente:</b> ${currentTeacherData.NombreCompleto}</small>`;
             
             docPortfolioModal.style.display = 'flex';
             
@@ -982,8 +1204,8 @@
 
             buildDocPortfolioForm(reportInfo);
 
-            if (isEditing && reportInfo.firma_url) {
-                const previewUrl = reportInfo.firma_url.replace("/uc?id=", "/file/d/") + "/preview";
+            if (isEditing && reportInfo.Firma_URL) {
+                const previewUrl = reportInfo.Firma_URL.replace("/uc?id=", "/file/d/") + "/preview";
                 existingSignatureIframeDoc.src = previewUrl;
                 existingSignatureWrapperDoc.style.display = 'block';
                 signaturePadWrapperDoc.style.display = 'none';
@@ -996,8 +1218,6 @@
 
             finalResponseDocPortfolioDiv.innerHTML = '';
             saveDocPortfolioBtn.style.display = 'block';
-            
-            // --- AJUSTE DE BOTÓN (LA CORRECCIÓN PRINCIPAL) ---
             saveDocPortfolioBtn.innerHTML = isEditing ? 'Actualizar Documentación' : 'Guardar Documentación';
             saveDocPortfolioBtn.disabled = false;
         }
@@ -1013,43 +1233,107 @@
             });
         });
 
-        // --- Lógica de Cálculo y Guardado ---
         addSkillBtn.addEventListener('click', () => { if (skillsContainer.children.length < 5) addSkillRow(); });
         skillsContainer.addEventListener('click', e => { if (e.target.classList.contains('btn-remove-skill')) { if (skillsContainer.children.length > 1) e.target.parentElement.remove(); recalculateAndValidate(); } });
         
         function addSkillRow(skill = null) {
             const skillRow = document.createElement('div');
             skillRow.className = 'skill-row';
-            skillRow.innerHTML = `<input type="text" placeholder="Escribe aquí..." value="${skill && skill.name ? skill.name : ''}"><input type="number" class="level-input" min="0" data-level="deficiente" value="${skill && skill.deficiente_cantidad ? skill.deficiente_cantidad : ''}"><span class="percent" data-level="deficiente-p">0.00</span><input type="number" class="level-input" min="0" data-level="suficiente" value="${skill && skill.suficiente_cantidad ? skill.suficiente_cantidad : ''}"><span class="percent" data-level="suficiente-p">0.00</span><input type="number" class="level-input" min="0" data-level="bueno" value="${skill && skill.bueno_cantidad ? skill.bueno_cantidad : ''}"><span class="percent" data-level="bueno-p">0.00</span><span class="percent" data-level="total-p">0.00</span><button class="btn btn-remove-skill">×</button>`;
+            skillRow.innerHTML = `<input type="text" placeholder="Escribe aquí..." value="${skill && skill.name ? skill.name : ''}"><input type="number" class="level-input" min="0" data-level="deficiente" value="${skill && skill.deficiente_cantidad ? skill.deficiente_cantidad : ''}"><span class="percent" data-level="deficiente-p">0.0</span><input type="number" class="level-input" min="0" data-level="suficiente" value="${skill && skill.suficiente_cantidad ? skill.suficiente_cantidad : ''}"><span class="percent" data-level="suficiente-p">0.0</span><input type="number" class="level-input" min="0" data-level="bueno" value="${skill && skill.bueno_cantidad ? skill.bueno_cantidad : ''}"><span class="percent" data-level="bueno-p">0.0</span><span class="percent" data-level="total-p">0.0%</span><button class="btn btn-remove-skill">×</button>`;
             skillsContainer.appendChild(skillRow);
         }
         
         reportModal.addEventListener('input', recalculateAndValidate);
         
+        function updateStatusIndicator(indicatorEl, isComplete) {
+             indicatorEl.textContent = isComplete ? 'Estado: Completado' : 'Estado: Pendiente';
+             indicatorEl.className = 'status-indicator';
+             indicatorEl.classList.add(isComplete ? 'pct-bg-green' : 'pct-bg-yellow');
+        }
+
         function recalculateAndValidate() {
             let isOverallValid = true;
+            let isReportComplete = true; 
             const matriculados = parseInt(matriculadosInput.value) || 0;
             const evaluados = parseInt(evaluadosInput.value) || 0;
+            
+            if (skillsContainer.children.length === 0 && evaluados > 0) isReportComplete = false;
+
             validationMsg.textContent = '';
             if (evaluados > matriculados && matriculados > 0) { isOverallValid = false; evaluadosInput.classList.add('input-error'); validationMsg.textContent = 'Error: Evaluados no puede superar a Matriculados.'; } 
             else { evaluadosInput.classList.remove('input-error'); }
+            
             document.querySelectorAll('.skill-row').forEach(row => {
                 const inputs = row.querySelectorAll('.level-input'); let sumaFila = 0; inputs.forEach(input => sumaFila += parseInt(input.value) || 0);
                 const rowIsValid = (evaluados === 0) || (sumaFila <= evaluados);
                 if (!rowIsValid) isOverallValid = false;
                 inputs.forEach(input => input.classList.toggle('input-error', !rowIsValid));
+                
+                if (sumaFila !== evaluados || evaluados === 0) {
+                    isReportComplete = false;
+                }
+
                 const def = parseInt(row.querySelector('[data-level="deficiente"]').value) || 0, suf = parseInt(row.querySelector('[data-level="suficiente"]').value) || 0, bue = parseInt(row.querySelector('[data-level="bueno"]').value) || 0;
-                const pDef = evaluados > 0 ? (def / evaluados) * 100 : 0, pSuf = evaluados > 0 ? (suf / evaluados) * 100 : 0, pBue = evaluados > 0 ? (bue / evaluados) * 100 : 0, pTotal = pDef + pSuf + pBue;
-                row.querySelector('[data-level="deficiente-p"]').textContent = pDef.toFixed(2); row.querySelector('[data-level="suficiente-p"]').textContent = pSuf.toFixed(2); row.querySelector('[data-level="bueno-p"]').textContent = pBue.toFixed(2);
-                const totalPercentSpan = row.querySelector('[data-level="total-p"]'); totalPercentSpan.textContent = pTotal.toFixed(2);
-                totalPercentSpan.style.backgroundColor = `hsl(${(pTotal / 100) * 120}, 90%, 50%)`; totalPercentSpan.style.color = pTotal > 40 && pTotal < 85 ? 'black' : 'white';
+                const pDef = evaluados > 0 ? (def / evaluados) * 100 : 0, pSuf = evaluados > 0 ? (suf / evaluados) * 100 : 0, pBue = evaluados > 0 ? (bue / evaluados) * 100 : 0;
+                const pTotal = pDef + pSuf + pBue;
+                
+                row.querySelector('[data-level="deficiente-p"]').textContent = pDef.toFixed(1); 
+                row.querySelector('[data-level="suficiente-p"]').textContent = pSuf.toFixed(1); 
+                row.querySelector('[data-level="bueno-p"]').textContent = pBue.toFixed(1);
+                row.querySelector('[data-level="total-p"]').textContent = pTotal.toFixed(1) + '%';
+
+                const totalPercentSpan = row.querySelector('[data-level="total-p"]');
+                totalPercentSpan.classList.remove('pct-bg-green', 'pct-bg-yellow', 'pct-bg-red');
+                if (pTotal > 100.1) totalPercentSpan.classList.add('pct-bg-red');
+                else if (pTotal > 99.9 && pTotal < 100.1) totalPercentSpan.classList.add('pct-bg-green');
+                else if (pTotal >= 60) totalPercentSpan.classList.add('pct-bg-yellow');
             });
+
+            updateStatusIndicator(entryTestStatusIndicator, isReportComplete);
+
             if (validationMsg.textContent === '') { validationMsg.textContent = isOverallValid ? '' : 'Error: La suma por fila no puede superar el total de evaluados.'; }
             const hasSkillName = skillsContainer.querySelector('input[type="text"]')?.value.trim() !== '';
             saveReportBtn.disabled = !isOverallValid || evaluados === 0 || matriculados === 0 || !hasSkillName;
         }
         
-        portfolioFormContainer.addEventListener('input', calculatePortfolio);
+        portfolioFormContainer.addEventListener('input', () => {
+            calculatePortfolio();
+            updatePortfolioStatusIndicator();
+        });
+
+        function updatePortfolioStatusIndicator() {
+             const isComplete = checkPortfolioCompletenessFromForm();
+             updateStatusIndicator(portfolioStatusIndicator, isComplete);
+        }
+
+        function checkPortfolioCompletenessFromForm() {
+            const matriculados = parseInt(p_matriculados.value) || 0;
+            const retirados = parseInt(p_retirados.value) || 0;
+            const abandono = parseInt(p_abandono.value) || 0;
+            const aprobados = document.getElementById('p_aprobados').value;
+            const asisten = matriculados - retirados - abandono;
+            const desaprobados = asisten - (parseInt(aprobados) || 0);
+            if (matriculados <= 0 || asisten < 0 || desaprobados < 0 || aprobados === '') return false;
+
+            const docenteObligatorios = ['silabo_upt', 'silabo_icacit', 'cv_icacit', 'material_curso', 'guias_lab', 'examenes', 'asistencia', 'notas'];
+            for (const key of docenteObligatorios) {
+                const hasCheck = document.getElementById(`dig_${key}`).checked || document.getElementById(`imp_${key}`).checked;
+                const hasCant = (parseInt(document.getElementById(`cant_${key}`).value) || 0) > 0;
+                const hasFile = document.getElementById(`file_${key}`).files.length > 0 || document.getElementById(`fname_${key}`).querySelector('a');
+                if (!hasCheck || !hasCant || !hasFile) return false;
+            }
+
+            const estudianteObligatorios = ['est_examenes', 'est_proyectos'];
+            for (const key of estudianteObligatorios) {
+                const hasCheck = document.getElementById(`dig_${key}`).checked || document.getElementById(`imp_${key}`).checked;
+                const hasCant = (parseInt(document.getElementById(`cant_${key}`).value) || 0) > 0;
+                const hasFile = document.getElementById(`file_${key}`).files.length > 0 || document.getElementById(`fname_${key}`).querySelector('a');
+                if (!hasCheck || !hasCant || !hasFile) return false;
+            }
+            
+            return true;
+        }
+
         function calculatePortfolio() {
             let isValid = true;
             let validationMessage = '';
@@ -1058,28 +1342,23 @@
             const abandono = parseInt(p_abandono.value) || 0;
             const aprobados = parseInt(p_aprobados.value) || 0;
             const asisten = matriculados - retirados - abandono;
-            p_asisten.value = asisten;
+            p_asisten.value = asisten >= 0 ? asisten : 0;
             const desaprobados = asisten - aprobados;
-            p_desaprobados.value = desaprobados;
+            p_desaprobados.value = desaprobados >= 0 ? desaprobados : 0;
             
-            if (matriculados <= 0) {
-                validationMessage = 'Debe ingresar el número de matriculados.';
-                isValid = false;
+            if (matriculados <= 0 && p_matriculados.value !== '') {
+                validationMessage = 'Debe ingresar un número válido de matriculados.'; isValid = false;
             } else if (asisten < 0) {
-                validationMessage = 'Error: La suma de retirados y abandonos no puede superar a los matriculados.';
-                isValid = false;
+                validationMessage = 'Error: Retirados y abandonos superan a los matriculados.'; isValid = false;
             } else if (desaprobados < 0) {
-                validationMessage = 'Error: El número de aprobados no puede superar a los que asisten.';
-                isValid = false;
+                validationMessage = 'Error: Aprobados superan a los que asisten.'; isValid = false;
             }
 
             portfolioValidationMsg.textContent = validationMessage;
             
-            const isButtonEnabled = isValid && (p_matriculados.value !== '');
-            savePortfolioBtn.disabled = !isButtonEnabled;
-            savePortfolioBtn.innerHTML = isButtonEnabled ? (currentReportId ? 'Actualizar Datos' : 'Guardar Datos') : 'Corrija los datos';
+            savePortfolioBtn.disabled = !isValid || (p_matriculados.value === '');
             
-            const formatPctText = (val, total) => total > 0 ? ((val / total) * 100).toFixed(2) + ' %' : '0.00 %';
+            const formatPctText = (val, total) => total > 0 ? ((val / total) * 100).toFixed(1) + '%' : '0.0%';
 
             document.getElementById('p_matriculados_span').textContent = formatPctText(matriculados, matriculados);
             document.getElementById('p_retirados_span').textContent = formatPctText(retirados, matriculados);
@@ -1089,23 +1368,12 @@
             document.getElementById('p_desaprobados_span').textContent = formatPctText(desaprobados, matriculados);
             
             const asisten_pct_val = matriculados > 0 ? (asisten / matriculados) * 100 : 0;
-            const matriculadosBar = document.getElementById('p_matriculados_bar');
-            const asistenBar = document.getElementById('p_asisten_bar');
+            const asistenBarContainer = p_asisten.nextElementSibling;
+            asistenBarContainer.classList.remove('pct-bg-green', 'pct-bg-yellow', 'pct-bg-red');
             
-            matriculadosBar.classList.remove('pct-green', 'pct-yellow', 'pct-red');
-            asistenBar.classList.remove('pct-green', 'pct-yellow', 'pct-red');
-            
-            matriculadosBar.style.width = '100%';
-            asistenBar.style.width = asisten_pct_val + '%';
-
-            matriculadosBar.classList.add('pct-green');
-            if (asisten_pct_val > 85) {
-                asistenBar.classList.add('pct-green');
-            } else if (asisten_pct_val >= 60) {
-                asistenBar.classList.add('pct-yellow');
-            } else {
-                asistenBar.classList.add('pct-red');
-            }
+            if (asisten_pct_val >= 90) asistenBarContainer.classList.add('pct-bg-green');
+            else if (asisten_pct_val >= 60) asistenBarContainer.classList.add('pct-bg-yellow');
+            else asistenBarContainer.classList.add('pct-bg-red');
         }
         
         saveReportBtn.addEventListener('click', async () => {
@@ -1136,9 +1404,7 @@
                 const response = await fetch(WEB_APP_URL, { method: 'POST', mode: 'cors', cache: 'no-cache', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ action: 'saveReport', reportType: 'entryTest', data: reportData }) });
                 const result = await response.json();
                 if (result.success) {
-                    refreshOnClose = true;
-                    saveReportBtn.style.display = 'none';
-                    addSkillBtn.style.display = 'none';
+                    refreshOnClose = true; saveReportBtn.style.display = 'none'; addSkillBtn.style.display = 'none';
                     finalResponseDiv.innerHTML = `✅ ¡Informe Guardado! <a href="${result.url}" target="_blank">Abrir Archivo</a>`;
                 } else { throw new Error(result.message || 'Error desconocido.'); }
             } catch (error) {
@@ -1154,16 +1420,9 @@
 
             const reportInfo = existingPortfolioReports[currentReportId];
             const portfolioData = {
-                uniqueId: currentReportId,
-                semestre: selectedSemester,
-                course: currentCourseData,
-                docente: currentTeacherData,
-                matriculados: p_matriculados.value,
-                retirados: p_retirados.value,
-                abandono: p_abandono.value,
-                asisten: p_asisten.value,
-                aprobados: p_aprobados.value,
-                desaprobados: p_desaprobados.value,
+                uniqueId: currentReportId, semestre: selectedSemester, course: currentCourseData, docente: currentTeacherData,
+                matriculados: p_matriculados.value, retirados: p_retirados.value, abandono: p_abandono.value,
+                asisten: p_asisten.value, aprobados: p_aprobados.value, desaprobados: p_desaprobados.value,
                 matriculados_pct: (parseFloat(document.getElementById('p_matriculados_span').textContent) || 0) / 100,
                 retirados_pct: (parseFloat(document.getElementById('p_retirados_span').textContent) || 0) / 100,
                 abandono_pct: (parseFloat(document.getElementById('p_abandono_span').textContent) || 0) / 100,
@@ -1180,9 +1439,7 @@
                 portfolioData[`dig_${key}`] = document.getElementById(`dig_${key}`).checked;
                 portfolioData[`imp_${key}`] = document.getElementById(`imp_${key}`).checked;
                 portfolioData[`cant_${key}`] = document.getElementById(`cant_${key}`).value;
-                if(reportInfo) {
-                    portfolioData[`url_${key}`] = reportInfo[`url_${key}`] || '';
-                }
+                if(reportInfo) { portfolioData[`url_${key}`] = reportInfo[`url_${key}`] || ''; }
             });
             
             const readFileAsBase64 = (file) => {
@@ -1203,13 +1460,10 @@
                 if (fileInput.files[0]) {
                     if (fileInput.files[0].size > 15 * 1024 * 1024) {
                          Swal.fire('Archivo muy grande', `El archivo para "${key}" supera los 15MB.`, 'error');
-                         savePortfolioBtn.innerHTML = 'Guardar Datos';
-                         savePortfolioBtn.disabled = false;
+                         savePortfolioBtn.innerHTML = 'Guardar Datos'; savePortfolioBtn.disabled = false;
                          throw new Error("File size exceeded");
                     }
-                    filePromises.push(readFileAsBase64(fileInput.files[0]).then(fileData => {
-                        portfolioData.files[key] = fileData;
-                    }));
+                    filePromises.push(readFileAsBase64(fileInput.files[0]).then(fileData => { portfolioData.files[key] = fileData; }));
                 }
             });
 
@@ -1218,24 +1472,18 @@
             
             try {
                 const response = await fetch(WEB_APP_URL, { 
-                    method: 'POST', 
-                    mode: 'cors', 
-                    cache: 'no-cache', 
+                    method: 'POST', mode: 'cors', cache: 'no-cache', 
                     headers: { 'Content-Type': 'text/plain;charset=utf-8' }, 
                     body: JSON.stringify({ action: 'saveReport', reportType: selectedReportType, data: portfolioData }) 
                 });
                 const result = await response.json();
                 if (result.success) {
-                    refreshOnClose = true;
-                    savePortfolioBtn.style.display = 'none';
+                    refreshOnClose = true; savePortfolioBtn.style.display = 'none';
                     finalResponsePortfolioDiv.innerHTML = `✅ ¡Datos Guardados! <a href="${result.url}" target="_blank">Abrir Archivo</a>`;
-                } else { 
-                    throw new Error(result.message || 'Error desconocido.'); 
-                }
+                } else { throw new Error(result.message || 'Error desconocido.'); }
             } catch (error) {
                 finalResponsePortfolioDiv.innerHTML = `<span style="color:var(--danger-color)">Error: ${error.message}</span>`;
-                savePortfolioBtn.innerHTML = 'Guardar Datos';
-                savePortfolioBtn.disabled = false;
+                savePortfolioBtn.innerHTML = 'Guardar Datos'; savePortfolioBtn.disabled = false;
             }
         });
         
@@ -1245,56 +1493,149 @@
                 const fileNameSpan = document.getElementById(`fname_${key}`);
                 if (e.target.files[0]) {
                     fileNameSpan.textContent = e.target.files[0].name;
+                    fileNameSpan.classList.add('file-name-filled');
                 } else {
-                    fileNameSpan.textContent = 'No hay archivo.';
+                    const reportInfo = existingPortfolioReports[currentReportId];
+                    const originalUrl = (reportInfo && reportInfo[`url_${key}`]) ? `<a href="${reportInfo[`url_${key}`]}" target="_blank">Ver Evidencia</a>` : 'Ningún archivo.';
+                    fileNameSpan.innerHTML = originalUrl;
+                     if (!reportInfo || !reportInfo[`url_${key}`]) {
+                        fileNameSpan.classList.remove('file-name-filled');
+                    }
                 }
             }
         });
 
-        // --- LÓGICA PARA EL NUEVO MODAL DE DOCUMENTACIÓN ---
-        
-        // ========= FUNCIÓN ACTUALIZADA (CONSTRUCCIÓN) =========
         function buildDocPortfolioForm(reportInfo) {
-            docPortfolioFormContainer.innerHTML = ''; // Limpiar el formulario
-            
-            docPortfolioKeys.forEach(group => {
-                docPortfolioFormContainer.innerHTML += `<div class="category">${group.category}</div>`;
-                group.items.forEach(item => {
-                    let labelClass = '';
-                    if (item.sub) labelClass = 'sub-item';
-                    if (item.subSub) labelClass = 'sub-sub-item';
+            docPortfolioFormContainer.innerHTML = '';
+            let projectCount = 0;
 
-                    const existingUrl = (reportInfo && reportInfo[`url_${item.key}`]) ? `<a href="${reportInfo[`url_${item.key}`]}" target="_blank">Ver Evidencia</a>` : 'No hay archivo.';
-                    
-                    // Se usa la misma estructura que en el modal de portafolio, pero con IDs prefijados
-                    docPortfolioFormContainer.innerHTML += `
-                        <label for="file_doc_${item.key}" class="${labelClass}">${item.label}</label>
+            const createItem = (item) => {
+                const urlValue = (reportInfo && reportInfo[item.key]) ? reportInfo[item.key] : '';
+                const hasUrl = !!urlValue;
+                const urlText = hasUrl ? `<a href="${urlValue}" target="_blank">Ver Evidencia</a>` : 'Ningún archivo.';
+                const filledClass = hasUrl ? 'file-name-filled' : '';
+                return `
+                    <div class="doc-item">
+                        <label for="file_doc_${item.key}">${item.label}</label>
                         <div class="file-upload-wrapper">
-                            <label for="file_doc_${item.key}" class="btn file-btn">Seleccionar archivo</label>
+                            <label for="file_doc_${item.key}" class="btn file-btn">Adjuntar</label>
                             <input type="file" id="file_doc_${item.key}">
-                            <span class="file-name" id="fname_doc_${item.key}">${existingUrl}</span>
+                            <span class="file-name ${filledClass}" id="fname_doc_${item.key}">${urlText}</span>
                         </div>
-                    `;
+                    </div>`;
+            };
+
+            docPortfolioStructure.forEach(el => {
+                if (el.type === 'category') {
+                    docPortfolioFormContainer.innerHTML += `<div class="doc-category">${el.label}</div>`;
+                } else if (el.type === 'subcategory') {
+                    docPortfolioFormContainer.innerHTML += `<div class="doc-subcategory">${el.label}</div>`;
+                } else if (el.type === 'item') {
+                    docPortfolioFormContainer.innerHTML += createItem(el);
+                } else if (el.type === 'project_section') {
+                    docPortfolioFormContainer.innerHTML += `<div class="doc-subcategory">${el.label}</div><div id="projects-container"></div>`;
+                }
+            });
+
+            docPortfolioFormContainer.innerHTML += `<div style="text-align: right; margin-top: 20px;"><button type="button" id="addProjectBtn" class="btn primary">+ Agregar Otro Proyecto</button></div>`;
+            const projectsContainer = docPortfolioFormContainer.querySelector('#projects-container');
+
+            const addProjectBlock = (projectData = {}) => {
+                projectCount++;
+                const block = document.createElement('div');
+                block.className = 'project-block';
+                block.dataset.index = projectCount;
+
+                const hasDoc = !!projectData.docUrl;
+                const hasSoft = !!projectData.softUrl;
+                const hasAnexos = !!projectData.anexosUrl;
+                const hasVideo = !!projectData.videoUrl;
+
+                const docText = hasDoc ? `<a href="${projectData.docUrl}" target="_blank">Ver Evidencia</a>` : 'Ningún archivo.';
+                const softText = hasSoft ? `<a href="${projectData.softUrl}" target="_blank">Ver Evidencia</a>` : 'Ningún archivo.';
+                const anexosText = hasAnexos ? `<a href="${projectData.anexosUrl}" target="_blank">Ver Evidencia</a>` : 'Ningún archivo.';
+                const videoText = hasVideo ? `<a href="${projectData.videoUrl}" target="_blank">Ver Evidencia</a>` : 'Ningún archivo.';
+
+                block.innerHTML = `
+                    <div class="project-header">
+                        <span>--- Proyecto ${projectCount} ---</span>
+                        ${projectCount > 1 ? '<button type="button" class="btn btn-remove-skill">×</button>' : ''}
+                    </div>
+                    <div class="project-item">
+                        <label for="p_nombre_${projectCount}">Proyecto (U3)</label>
+                        <input type="text" id="p_nombre_${projectCount}" value="${projectData.nombre || ''}">
+                    </div>
+                    <div class="project-item">
+                        <label for="file_doc_p_doc_${projectCount}">Documentación (U3)</label>
+                        <div class="file-upload-wrapper">
+                            <label for="file_doc_p_doc_${projectCount}" class="btn file-btn">Adjuntar</label>
+                            <input type="file" id="file_doc_p_doc_${projectCount}">
+                            <span class="file-name ${hasDoc ? 'file-name-filled' : ''}" id="fname_doc_p_doc_${projectCount}">${docText}</span>
+                        </div>
+                    </div>
+                    <div class="project-item">
+                        <label for="file_doc_p_soft_${projectCount}">Software (U3)</label>
+                        <div class="file-upload-wrapper">
+                            <label for="file_doc_p_soft_${projectCount}" class="btn file-btn">Adjuntar</label>
+                            <input type="file" id="file_doc_p_soft_${projectCount}">
+                            <span class="file-name ${hasSoft ? 'file-name-filled' : ''}" id="fname_doc_p_soft_${projectCount}">${softText}</span>
+                        </div>
+                    </div>
+                    <div class="project-item">
+                        <label for="file_doc_p_anexos_${projectCount}">Anexos (U3)</label>
+                        <div class="file-upload-wrapper">
+                            <label for="file_doc_p_anexos_${projectCount}" class="btn file-btn">Adjuntar</label>
+                            <input type="file" id="file_doc_p_anexos_${projectCount}">
+                            <span class="file-name ${hasAnexos ? 'file-name-filled' : ''}" id="fname_doc_p_anexos_${projectCount}">${anexosText}</span>
+                        </div>
+                    </div>
+                    <div class="project-item">
+                        <label for="file_doc_p_video_${projectCount}">Video (U3)</label>
+                        <div class="file-upload-wrapper">
+                            <label for="file_doc_p_video_${projectCount}" class="btn file-btn">Adjuntar</label>
+                            <input type="file" id="file_doc_p_video_${projectCount}">
+                            <span class="file-name ${hasVideo ? 'file-name-filled' : ''}" id="fname_doc_p_video_${projectCount}">${videoText}</span>
+                        </div>
+                    </div>
+                `;
+                projectsContainer.appendChild(block);
+            };
+
+            if (reportInfo && reportInfo.nombres_proyectos_u3 && reportInfo.nombres_proyectos_u3.length > 0 && reportInfo.nombres_proyectos_u3[0]) {
+                reportInfo.nombres_proyectos_u3.forEach((name, i) => {
+                    addProjectBlock({
+                        nombre: name,
+                        docUrl: reportInfo.urls_documentacion_proyectos_u3[i],
+                        softUrl: reportInfo.urls_software_proyectos_u3[i],
+                        anexosUrl: reportInfo.urls_anexos_proyectos_u3[i],
+                        videoUrl: reportInfo.urls_video_proyectos_u3[i]
+                    });
                 });
+            } else {
+                addProjectBlock();
+            }
+
+            docPortfolioFormContainer.addEventListener('click', e => {
+                if (e.target.id === 'addProjectBtn') {
+                    addProjectBlock();
+                }
+                if (e.target.classList.contains('btn-remove-skill')) {
+                    e.target.closest('.project-block').remove();
+                }
             });
         }
 
-        // ========= FUNCIÓN ACTUALIZADA (MANEJO DE EVENTOS) =========
         docPortfolioFormContainer.addEventListener('change', e => {
-            if (e.target.type === 'file' && e.target.id.startsWith('file_doc_')) {
-                // Extraemos la clave original quitando el prefijo
-                const key = e.target.id.replace('file_doc_', '');
-                // Buscamos el span usando el mismo prefijo
-                const fileNameSpan = document.getElementById(`fname_doc_${key}`);
-                
+            if (e.target.type === 'file') {
+                const id = e.target.id;
+                const fileNameSpan = docPortfolioFormContainer.querySelector(`#fname_${id.substring(5)}`);
                 if (fileNameSpan) {
-                    if (e.target.files && e.target.files[0]) {
+                    if (e.target.files[0]) {
                         fileNameSpan.textContent = e.target.files[0].name;
+                        fileNameSpan.classList.add('file-name-filled');
                     } else {
-                        // Si se cancela, restaurar el estado original
-                        const reportInfo = existingDocPortfolioReports[currentReportId];
-                        const originalUrl = (reportInfo && reportInfo[`url_${key}`]) ? `<a href="${reportInfo[`url_${key}`]}" target="_blank">Ver Evidencia</a>` : 'No hay archivo.';
-                        fileNameSpan.innerHTML = originalUrl;
+                        fileNameSpan.textContent = 'Ningún archivo.';
+                        fileNameSpan.classList.remove('file-name-filled');
                     }
                 }
             }
@@ -1312,15 +1653,14 @@
                 course: currentCourseData,
                 docente: currentTeacherData,
                 signatureBase64: (signaturePadWrapperDoc.style.display !== 'none' && docPortfolioSignaturePad && !docPortfolioSignaturePad.isEmpty()) ? docPortfolioSignaturePad.toDataURL('image/png') : null,
-                existingSignatureUrl: (reportInfo) ? reportInfo.firma_url : null,
-                files: {}
+                existingSignatureUrl: (reportInfo) ? reportInfo.Firma_URL : null,
+                files: {},
+                projects: []
             };
 
-            const allKeys = docPortfolioKeys.flatMap(group => group.items.map(item => item.key));
-            allKeys.forEach(key => {
-                 if(reportInfo) {
-                    docPortfolioData[`url_${key}`] = reportInfo[`url_${key}`] || '';
-                }
+            const staticKeys = docPortfolioStructure.filter(el => el.type === 'item').map(el => el.key);
+            staticKeys.forEach(key => {
+                if(reportInfo) docPortfolioData[key] = reportInfo[key] || '';
             });
             
             const readFileAsBase64 = (file) => {
@@ -1336,22 +1676,44 @@
             };
 
             const filePromises = [];
-            allKeys.forEach(key => {
-                // ========= LÍNEA CRÍTICA ACTUALIZADA =========
-                // Buscamos el input por su ID prefijado para obtener el archivo
+            staticKeys.forEach(key => {
                 const fileInput = document.getElementById(`file_doc_${key}`);
                 if (fileInput && fileInput.files[0]) {
-                    if (fileInput.files[0].size > 15 * 1024 * 1024) {
+                     if (fileInput.files[0].size > 15 * 1024 * 1024) {
                          Swal.fire('Archivo muy grande', `El archivo para "${key}" supera los 15MB.`, 'error');
-                         saveDocPortfolioBtn.innerHTML = 'Guardar Documentación';
-                         saveDocPortfolioBtn.disabled = false;
+                         saveDocPortfolioBtn.innerHTML = 'Guardar Documentación'; saveDocPortfolioBtn.disabled = false;
                          throw new Error("File size exceeded");
                     }
                     filePromises.push(readFileAsBase64(fileInput.files[0]).then(fileData => {
-                        // Guardamos el archivo en el objeto de datos usando la clave original, sin prefijo
                         docPortfolioData.files[key] = fileData;
                     }));
                 }
+            });
+
+            document.querySelectorAll('.project-block').forEach((block, i) => {
+                const index = block.dataset.index;
+                const project = {
+                    nombre: document.getElementById(`p_nombre_${index}`).value,
+                    files: {},
+                    urls: {}
+                };
+                
+                if(reportInfo && reportInfo.urls_documentacion_proyectos_u3) project.urls.documentacion = reportInfo.urls_documentacion_proyectos_u3[i] || '';
+                if(reportInfo && reportInfo.urls_software_proyectos_u3) project.urls.software = reportInfo.urls_software_proyectos_u3[i] || '';
+                if(reportInfo && reportInfo.urls_anexos_proyectos_u3) project.urls.anexos = reportInfo.urls_anexos_proyectos_u3[i] || '';
+                if(reportInfo && reportInfo.urls_video_proyectos_u3) project.urls.video = reportInfo.urls_video_proyectos_u3[i] || '';
+
+                const docFile = document.getElementById(`file_doc_p_doc_${index}`).files[0];
+                const softFile = document.getElementById(`file_doc_p_soft_${index}`).files[0];
+                const anexosFile = document.getElementById(`file_doc_p_anexos_${index}`).files[0];
+                const videoFile = document.getElementById(`file_doc_p_video_${index}`).files[0];
+
+                if(docFile) filePromises.push(readFileAsBase64(docFile).then(data => project.files.documentacion = data));
+                if(softFile) filePromises.push(readFileAsBase64(softFile).then(data => project.files.software = data));
+                if(anexosFile) filePromises.push(readFileAsBase64(anexosFile).then(data => project.files.anexos = data));
+                if(videoFile) filePromises.push(readFileAsBase64(videoFile).then(data => project.files.video = data));
+                
+                docPortfolioData.projects.push(project);
             });
 
             await Promise.all(filePromises);
@@ -1359,9 +1721,7 @@
             
             try {
                 const response = await fetch(WEB_APP_URL, { 
-                    method: 'POST', 
-                    mode: 'cors', 
-                    cache: 'no-cache', 
+                    method: 'POST', mode: 'cors', cache: 'no-cache', 
                     headers: { 'Content-Type': 'text/plain;charset=utf-8' }, 
                     body: JSON.stringify({ action: 'saveReport', reportType: 'docPortfolio', data: docPortfolioData }) 
                 });
