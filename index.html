@@ -103,10 +103,12 @@
         }
         .modal-close:hover { color: var(--text-primary); }
 
-        #semesterModal { display: flex; }
-        #semesterModal .modal-content { max-width: 380px; text-align: center; }
-        #semesterModal h2 { color: var(--primary-color); margin-top: 0; margin-bottom: 24px; font-weight: 600; }
-        #semesterLoader { display: none; margin-top: 15px; }
+        #semesterModal, #passwordModal { display: flex; }
+        #semesterModal .modal-content, #passwordModal .modal-content { max-width: 380px; text-align: center; }
+        #semesterModal h2, #passwordModal h2 { color: var(--primary-color); margin-top: 0; margin-bottom: 24px; font-weight: 600; }
+        #semesterLoader, #passwordLoader { display: none; margin-top: 15px; }
+        #passwordModal { display: none; } /* Oculto por defecto */
+        #passwordValidationMessage { color: var(--danger-color); height: 20px; font-weight: 500; margin-top: 10px;}
 
         /* --- Formularios y Entradas (Estilo Fluent) --- */
         .form-section { margin-bottom: 24px; }
@@ -114,7 +116,7 @@
             font-weight: 600; display: block; margin-bottom: 8px; font-size: 0.9em;
             color: var(--text-secondary);
         }
-        select, input[type="text"], input[type="number"], textarea {
+        select, input[type="text"], input[type="number"], input[type="password"], textarea {
             width: 100%; box-sizing: border-box; padding: 10px 12px;
             border: 1px solid var(--surface-border); border-radius: var(--border-radius);
             font-size: 1em; font-family: var(--font-family);
@@ -180,12 +182,12 @@
         .btn:focus-visible { outline: none; box-shadow: 0 0 0 3px var(--primary-color-focus-ring); border-color: var(--primary-color); }
         .btn:disabled { opacity: 0.5; cursor: not-allowed; }
         
-        .btn.primary, #loadSemesterBtn, #searchButton, .btn-save {
+        .btn.primary, #loadSemesterBtn, #searchButton, .btn-save, #validatePasswordBtn {
             background-color: var(--primary-color); color: var(--text-on-primary); border-color: var(--primary-color);
         }
-        .btn.primary:hover:not(:disabled) { background-color: #0052a2; border-color: #0052a2; }
+        .btn.primary:hover:not(:disabled), #validatePasswordBtn:hover:not(:disabled) { background-color: #0052a2; border-color: #0052a2; }
         
-        #loadSemesterBtn, #searchButton, .btn-save { font-size: 1em; padding: 10px 16px; }
+        #loadSemesterBtn, #searchButton, .btn-save, #validatePasswordBtn { font-size: 1em; padding: 10px 16px; }
         
         .course-card .card-buttons {
             display: flex; flex-wrap: wrap; justify-content: flex-end; align-items: center;
@@ -308,6 +310,22 @@
             </select>
             <button id="loadSemesterBtn" class="btn primary" style="width: 100%; margin-top: 16px;">Cargar Datos</button>
             <div id="semesterLoader"><div class="spinner" style="margin: 20px auto 0;"></div></div>
+        </div>
+    </div>
+    
+    <!-- MODAL DE CONTRASEÑA -->
+    <div id="passwordModal" class="modal-overlay">
+        <div class="modal-content">
+            <span class="modal-close" onclick="document.getElementById('passwordModal').style.display='none'">×</span>
+            <h2>Verificación de Docente</h2>
+            <p id="passwordModalText" style="color: var(--text-secondary); margin-bottom: 16px;">Por favor, ingrese su contraseña para continuar.</p>
+            <input type="password" id="passwordInput" placeholder="Contraseña...">
+            <div id="passwordValidationMessage"></div>
+            <div id="passwordLoader" style="display: none;"><div class="spinner" style="margin: 15px auto 0;"></div></div>
+            <div style="display: flex; gap: 10px; margin-top: 24px;">
+                <button id="cancelPasswordBtn" class="btn" style="width: 100%;" onclick="document.getElementById('passwordModal').style.display='none'">Cancelar</button>
+                <button id="validatePasswordBtn" class="btn" style="width: 100%;">Validar</button>
+            </div>
         </div>
     </div>
 
@@ -625,7 +643,7 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.0.0/dist/signature_pad.umd.min.js"></script>
     <script>
-        const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzBkhFBPqU_5I8wK99n_cCte1cG88h3QzwhGHhRiZ5YTbK3oR3VJew3ZWji7V6S-65t/exec";
+        const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyN_SOOBrKFiBvOOpwdi6Y5DeCgqZ-EO1n_WFiu5DZRz6aeI8dpX1rXKLLbpmHLkZXp/exec";
         
         const semesterModal = document.getElementById('semesterModal');
         const semesterSelector = document.getElementById('semesterSelector');
@@ -697,6 +715,14 @@
         const clearSignatureBtnDoc = document.getElementById('clear_signature_btn_doc');
         const existingSignatureWrapperDoc = document.getElementById('existing_signature_wrapper_doc');
         const existingSignatureIframeDoc = document.getElementById('existing_signature_iframe_doc');
+
+        // Modal de Contraseña
+        const passwordModal = document.getElementById('passwordModal');
+        const passwordInput = document.getElementById('passwordInput');
+        const validatePasswordBtn = document.getElementById('validatePasswordBtn');
+        const passwordLoader = document.getElementById('passwordLoader');
+        const passwordValidationMessage = document.getElementById('passwordValidationMessage');
+        const passwordModalText = document.getElementById('passwordModalText');
 
         let allTeachers = [];
         let currentCourseData = {};
@@ -852,10 +878,13 @@
         reportTypeSelector.addEventListener('change', () => {
             selectedReportType = reportTypeSelector.value;
             searchSection.style.display = 'block';
-            teacherInput.value = '';
-            teacherDetailsDiv.innerHTML = '';
-            coursesResultsDiv.innerHTML = '';
-            suggestionsDiv.style.display = 'none';
+            if (teacherInput.value) {
+                suggestionsDiv.style.display = 'none';
+                performSearch(teacherInput.value);
+            } else {
+                 teacherDetailsDiv.innerHTML = '';
+                 coursesResultsDiv.innerHTML = '';
+            }
         });
 
         teacherInput.addEventListener('input', () => {
@@ -883,7 +912,7 @@
                 item.addEventListener('click', () => { 
                     teacherInput.value = teacher; 
                     suggestionsDiv.style.display = 'none'; 
-                    performSearch(teacher); 
+                    openPasswordModal(teacher); 
                 });
                 suggestionsDiv.appendChild(item);
             });
@@ -899,15 +928,63 @@
         searchButton.addEventListener('click', () => { 
             if(teacherInput.value) {
                 suggestionsDiv.style.display = 'none';
-                performSearch(teacherInput.value);
+                openPasswordModal(teacherInput.value);
             }
         });
         teacherInput.addEventListener('keypress', (e) => { 
             if (e.key === 'Enter' && teacherInput.value) {
                 suggestionsDiv.style.display = 'none';
-                performSearch(teacherInput.value);
+                openPasswordModal(teacherInput.value);
             }
         });
+        
+        function openPasswordModal(teacherName) {
+            passwordModal.style.display = 'flex';
+            passwordInput.value = '';
+            passwordValidationMessage.textContent = '';
+            passwordLoader.style.display = 'none';
+            validatePasswordBtn.disabled = false;
+            passwordModalText.innerHTML = `Por favor, ingrese la contraseña para <b>${teacherName}</b>.`;
+            passwordInput.focus();
+        }
+        
+        validatePasswordBtn.addEventListener('click', handlePasswordValidation);
+        passwordInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                handlePasswordValidation();
+            }
+        });
+
+        async function handlePasswordValidation() {
+            const teacherName = teacherInput.value;
+            const password = passwordInput.value;
+            if (!password) {
+                passwordValidationMessage.textContent = 'El campo no puede estar vacío.';
+                return;
+            }
+
+            passwordLoader.style.display = 'block';
+            validatePasswordBtn.disabled = true;
+            passwordValidationMessage.textContent = '';
+
+            try {
+                const url = `${WEB_APP_URL}?action=validateLogin&teacher=${encodeURIComponent(teacherName)}&password=${encodeURIComponent(password)}`;
+                const response = await fetch(url);
+                if (!response.ok) throw new Error("Error de red.");
+                const result = await response.json();
+                
+                if (result.success) {
+                    passwordModal.style.display = 'none';
+                    performSearch(teacherName);
+                } else {
+                    throw new Error(result.message || "Error desconocido.");
+                }
+            } catch (error) {
+                passwordLoader.style.display = 'none';
+                validatePasswordBtn.disabled = false;
+                passwordValidationMessage.textContent = error.message;
+            }
+        }
 
         async function performSearch(teacherName) {
             searchLoader.style.display = 'flex';
@@ -1307,8 +1384,7 @@
             const matriculados = parseInt(matriculadosInput.value) || 0;
             const evaluados = parseInt(evaluadosInput.value) || 0;
             
-            if (skillsContainer.children.length === 0 && evaluados > 0) { isReportComplete = false; }
-            if(existingSignatureWrapper.style.display === 'none' && (!entrySignaturePad || entrySignaturePad.isEmpty())){
+            if ((skillsContainer.children.length === 0 && evaluados > 0) || (existingSignatureWrapper.style.display === 'none' && (!entrySignaturePad || entrySignaturePad.isEmpty()))) {
                 isReportComplete = false;
             }
 
