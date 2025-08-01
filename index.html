@@ -199,7 +199,6 @@
         .btn-state-pending:hover:not(:disabled) { background-color: #fff6cf; border-color: #fff6cf;}
         .btn-state-completed { background-color: var(--success-bg); color: var(--success-color); border-color: var(--success-bg); }
         .btn-state-completed:hover:not(:disabled) { background-color: #e2f2ec; border-color: #e2f2ec;}
-        .btn-doc-portfolio-new { background-color: var(--primary-color); color: var(--text-on-primary); border-color: var(--primary-color); }
 
         /* --- Controles de Modales --- */
         .modal-header { position: relative; }
@@ -283,6 +282,8 @@
         .file-name { font-size: 0.8em; color: var(--text-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-height: 1.2em; padding: 4px 8px; border-radius: var(--border-radius); }
         .file-name a { color: var(--primary-color); text-decoration: none; font-weight: 600;}
         .file-name-filled { background-color: var(--success-bg); color: var(--success-color); font-weight: 600; }
+        .mandatory-star { color: var(--orange-color); font-weight: 600; margin-left: 4px; }
+        .mandatory-legend { font-size: 0.8em; color: var(--text-secondary); margin-top: 16px; }
 
         @media (max-width: 768px) {
             body { padding: 12px; }
@@ -360,14 +361,15 @@
             <div class="modal-body">
                  <div class="top-form-group" style="display: flex; gap: 24px; align-items: center; margin-bottom: 24px;">
                     <div>
-                        <label>Matriculados:</label><input type="number" id="matriculados" min="0" style="width: 120px;">
+                        <label>Matriculados <span class="mandatory-star">*</span></label><input type="number" id="matriculados" min="0" style="width: 120px;">
                     </div>
                     <div>
-                        <label>Evaluados:</label><input type="number" id="evaluados" min="0" style="width: 120px;">
+                        <label>Evaluados <span class="mandatory-star">*</span></label><input type="number" id="evaluados" min="0" style="width: 120px;">
                     </div>
                 </div>
+                 <p class="mandatory-legend"><span class="mandatory-star">*</span> Los campos marcados son obligatorios para completar el informe.</p>
                 <div class="skills-header">
-                    <div>Conocimiento</div><div>Deficiente</div><div>%</div>
+                    <div>Conocimiento <span class="mandatory-star">*</span></div><div>Deficiente</div><div>%</div>
                     <div>Suficiente</div><div>%</div><div>Bueno</div>
                     <div>%</div><div>Total %</div><div></div>
                 </div>
@@ -398,7 +400,7 @@
                 </div>
                 <hr>
                 <div class="signature-section">
-                    <h4>Firma del Docente</h4>
+                    <h4>Firma del Docente <span class="mandatory-star">*</span></h4>
                     <div id="signature_pad_wrapper" class="signature-pad-wrapper">
                         <canvas id="signature_canvas"></canvas>
                     </div>
@@ -428,12 +430,13 @@
             </div>
             <div class="modal-body">
                 <div id="portfolio-form-container">
+                    <p class="mandatory-legend" style="text-align: right;"><span class="mandatory-star">*</span> Los campos marcados son obligatorios para completar el informe.</p>
                     <div class="portfolio-grid">
                         <div class="grid-header">Estudiantes</div>
                         <div class="grid-header">Cantidad</div>
                         <div class="grid-header">Porcentaje</div>
                         <div class="grid-row" style="grid-column: 1 / -1; display: contents;">
-                            <label for="p_matriculados">Matriculados</label>
+                            <label for="p_matriculados">Matriculados <span class="mandatory-star">*</span></label>
                             <input type="number" id="p_matriculados" min="0">
                             <div class="percentage pct-bg-green"><span id="p_matriculados_span"></span></div>
                         </div>
@@ -453,7 +456,7 @@
                             <div class="percentage"><span id="p_asisten_span"></span></div>
                         </div>
                         <div class="grid-row sub-group" style="grid-column: 1 / -1; display: contents;">
-                             <label>Aprobados</label>
+                             <label>Aprobados <span class="mandatory-star">*</span></label>
                             <input type="number" id="p_aprobados" min="0">
                             <div class="percentage" style="background: transparent;"><span id="p_aprobados_span"></span></div>
                         </div>
@@ -471,32 +474,32 @@
                         <div class="grid-header">Dig</div><div class="grid-header">Imp</div>
                         <div class="grid-header">Cant</div><div class="grid-header">Evidencia</div>
                         
-                        <label>Sílabo formato UPT</label>
+                        <label>Sílabo formato UPT <span class="mandatory-star">*</span></label>
                         <input type="checkbox" id="dig_silabo_upt"><input type="checkbox" id="imp_silabo_upt">
                         <input type="number" id="cant_silabo_upt" min="0">
                         <div class="file-upload-wrapper"><label for="file_silabo_upt" class="btn file-btn">Adjuntar</label><input type="file" id="file_silabo_upt"><span class="file-name" id="fname_silabo_upt"></span></div>
                         
-                        <label>Sílabo formato ICACIT</label>
+                        <label>Sílabo formato ICACIT <span class="mandatory-star">*</span></label>
                         <input type="checkbox" id="dig_silabo_icacit"><input type="checkbox" id="imp_silabo_icacit">
                         <input type="number" id="cant_silabo_icacit" min="0">
                         <div class="file-upload-wrapper"><label for="file_silabo_icacit" class="btn file-btn">Adjuntar</label><input type="file" id="file_silabo_icacit"><span class="file-name" id="fname_silabo_icacit"></span></div>
 
-                        <label>Curriculum Vitae formato ICACIT</label>
+                        <label>Curriculum Vitae formato ICACIT <span class="mandatory-star">*</span></label>
                         <input type="checkbox" id="dig_cv_icacit"><input type="checkbox" id="imp_cv_icacit">
                         <input type="number" id="cant_cv_icacit" min="0">
                         <div class="file-upload-wrapper"><label for="file_cv_icacit" class="btn file-btn">Adjuntar</label><input type="file" id="file_cv_icacit"><span class="file-name" id="fname_cv_icacit"></span></div>
 
-                        <label>Material del Curso (Texto, Diapositivas)</label>
+                        <label>Material del Curso (Texto, Diapositivas) <span class="mandatory-star">*</span></label>
                         <input type="checkbox" id="dig_material_curso"><input type="checkbox" id="imp_material_curso">
                         <input type="number" id="cant_material_curso" min="0">
                         <div class="file-upload-wrapper"><label for="file_material_curso" class="btn file-btn">Adjuntar</label><input type="file" id="file_material_curso"><span class="file-name" id="fname_material_curso"></span></div>
 
-                        <label>Guías de laboratorio y talleres</label>
+                        <label>Guías de laboratorio y talleres <span class="mandatory-star">*</span></label>
                         <input type="checkbox" id="dig_guias_lab"><input type="checkbox" id="imp_guias_lab">
                         <input type="number" id="cant_guias_lab" min="0">
                         <div class="file-upload-wrapper"><label for="file_guias_lab" class="btn file-btn">Adjuntar</label><input type="file" id="file_guias_lab"><span class="file-name" id="fname_guias_lab"></span></div>
 
-                        <label>Enunciado y resolución de exámenes</label>
+                        <label>Enunciado y resolución de exámenes <span class="mandatory-star">*</span></label>
                         <input type="checkbox" id="dig_examenes"><input type="checkbox" id="imp_examenes">
                         <input type="number" id="cant_examenes" min="0">
                         <div class="file-upload-wrapper"><label for="file_examenes" class="btn file-btn">Adjuntar</label><input type="file" id="file_examenes"><span class="file-name" id="fname_examenes"></span></div>
@@ -506,12 +509,12 @@
                         <input type="number" id="cant_practicas" min="0">
                         <div class="file-upload-wrapper"><label for="file_practicas" class="btn file-btn">Adjuntar</label><input type="file" id="file_practicas"><span class="file-name" id="fname_practicas"></span></div>
                         
-                        <label>Registro de Asistencia</label>
+                        <label>Registro de Asistencia <span class="mandatory-star">*</span></label>
                         <input type="checkbox" id="dig_asistencia"><input type="checkbox" id="imp_asistencia">
                         <input type="number" id="cant_asistencia" min="0">
                         <div class="file-upload-wrapper"><label for="file_asistencia" class="btn file-btn">Adjuntar</label><input type="file" id="file_asistencia"><span class="file-name" id="fname_asistencia"></span></div>
                         
-                        <label>Registro de Notas</label>
+                        <label>Registro de Notas <span class="mandatory-star">*</span></label>
                         <input type="checkbox" id="dig_notas"><input type="checkbox" id="imp_notas">
                         <input type="number" id="cant_notas" min="0">
                         <div class="file-upload-wrapper"><label for="file_notas" class="btn file-btn">Adjuntar</label><input type="file" id="file_notas"><span class="file-name" id="fname_notas"></span></div>
@@ -533,7 +536,7 @@
                         <input type="number" id="cant_est_cuadernos" min="0">
                         <div class="file-upload-wrapper"><label for="file_est_cuadernos" class="btn file-btn">Adjuntar</label><input type="file" id="file_est_cuadernos"><span class="file-name" id="fname_est_cuadernos"></span></div>
 
-                        <label>Original de exámenes de unidad</label>
+                        <label>Original de exámenes de unidad <span class="mandatory-star">*</span></label>
                         <input type="checkbox" id="dig_est_examenes"><input type="checkbox" id="imp_est_examenes">
                         <input type="number" id="cant_est_examenes" min="0">
                         <div class="file-upload-wrapper"><label for="file_est_examenes" class="btn file-btn">Adjuntar</label><input type="file" id="file_est_examenes"><span class="file-name" id="fname_est_examenes"></span></div>
@@ -553,7 +556,7 @@
                         <input type="number" id="cant_est_trabajos" min="0">
                         <div class="file-upload-wrapper"><label for="file_est_trabajos" class="btn file-btn">Adjuntar</label><input type="file" id="file_est_trabajos"><span class="file-name" id="fname_est_trabajos"></span></div>
 
-                        <label>Trabajos y/o proyectos finales</label>
+                        <label>Trabajos y/o proyectos finales <span class="mandatory-star">*</span></label>
                         <input type="checkbox" id="dig_est_proyectos"><input type="checkbox" id="imp_est_proyectos">
                         <input type="number" id="cant_est_proyectos" min="0">
                         <div class="file-upload-wrapper"><label for="file_est_proyectos" class="btn file-btn">Adjuntar</label><input type="file" id="file_est_proyectos"><span class="file-name" id="fname_est_proyectos"></span></div>
@@ -564,7 +567,7 @@
                         <input type="date" id="fecha_entrega_portfolio" style="width: auto;">
                     </div>
                     <div class="signature-section" style="margin-top: 24px;">
-                        <h4>Firma del Docente</h4>
+                        <h4>Firma del Docente <span class="mandatory-star">*</span></h4>
                         <div id="signature_pad_wrapper_portfolio" class="signature-pad-wrapper">
                             <canvas id="signature_canvas_portfolio"></canvas>
                         </div>
@@ -589,14 +592,17 @@
     <div id="docPortfolioModal" class="modal-overlay">
         <div class="modal-content">
             <span class="modal-close">×</span>
-            <div class="modal-header"><h2 id="docPortfolioModalTitle"></h2></div>
+            <div class="modal-header">
+                <h2 id="docPortfolioModalTitle"></h2>
+                <div id="docPortfolioStatusIndicator" class="status-indicator"></div>
+            </div>
             <div class="modal-body">
                 <div id="doc-portfolio-form-container">
                     <!-- Las filas se generarán dinámicamente con JavaScript -->
                 </div>
                  <hr>
                 <div class="signature-section">
-                    <h4>Firma del Docente</h4>
+                    <h4>Firma del Docente <span class="mandatory-star">*</span></h4>
                     <div id="signature_pad_wrapper_doc" class="signature-pad-wrapper">
                         <canvas id="signature_canvas_doc"></canvas>
                     </div>
@@ -619,7 +625,7 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.0.0/dist/signature_pad.umd.min.js"></script>
     <script>
-        const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxcIpjkcdAOeFJWH7IJPVL59_yEhIdkNbGm94jZ8_xCQxgDOkuJyBDxIijsLUhhMlEr/exec";
+        const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzJTbfl4Ow_XG1seR1SUrl1y3ulQ2sys8n3W_Ga_tDnKs_NCK2EIbIufA3RxZRiWGA/exec";
         
         const semesterModal = document.getElementById('semesterModal');
         const semesterSelector = document.getElementById('semesterSelector');
@@ -683,6 +689,7 @@
         const docPortfolioModal = document.getElementById('docPortfolioModal');
         const docPortfolioFormContainer = document.getElementById('doc-portfolio-form-container');
         const docPortfolioModalTitle = document.getElementById('docPortfolioModalTitle');
+        const docPortfolioStatusIndicator = document.getElementById('docPortfolioStatusIndicator');
         const saveDocPortfolioBtn = document.getElementById('saveDocPortfolioBtn');
         const finalResponseDocPortfolioDiv = document.getElementById('final-response-doc-portfolio');
         const signaturePadWrapperDoc = document.getElementById('signature_pad_wrapper_doc');
@@ -712,52 +719,52 @@
 
         const docPortfolioStructure = [
             { type: 'category', label: '1. Información General' },
-            { type: 'item', key: 'url_cv_personal', label: 'Curriculum Personal' },
-            { type: 'item', key: 'url_cv_icacit', label: 'Curriculum ICACIT' },
+            { type: 'item', key: 'url_cv_personal', label: 'Curriculum Personal', mandatory: true },
+            { type: 'item', key: 'url_cv_icacit', label: 'Curriculum ICACIT', mandatory: true },
             { type: 'category', label: '2. Prueba de Entrada' },
-            { type: 'item', key: 'url_examen_entrada', label: 'Examen' },
-            { type: 'item', key: 'url_notas_entrada', label: 'Notas' },
+            { type: 'item', key: 'url_examen_entrada', label: 'Examen', mandatory: true },
+            { type: 'item', key: 'url_notas_entrada', label: 'Notas', mandatory: true },
             { type: 'category', label: '3. Sílabos' },
-            { type: 'item', key: 'url_silabo_upt', label: 'Silabo UPT' },
-            { type: 'item', key: 'url_silabo_icacit', label: 'Silabo ICACIT' },
+            { type: 'item', key: 'url_silabo_upt', label: 'Silabo UPT', mandatory: true },
+            { type: 'item', key: 'url_silabo_icacit', label: 'Silabo ICACIT', mandatory: true },
             { type: 'category', label: '4. Unidad I' },
             { type: 'subcategory', label: '4.1. Notas Asistencia' },
-            { type: 'item', key: 'url_notas_u1', label: 'Notas (U1)' },
+            { type: 'item', key: 'url_notas_u1', label: 'Notas (U1)', mandatory: true },
             { type: 'subcategory', label: '4.2. Recursos Docente' },
-            { type: 'item', key: 'url_solucion_examen_u1', label: 'Solución Examen (U1)' },
-            { type: 'item', key: 'url_presentaciones_u1', label: 'Presentaciones (Diapositivas) (U1)' },
-            { type: 'item', key: 'url_guias_lab_u1', label: 'Guías de Laboratorios (U1)' },
-            { type: 'item', key: 'url_otros_recursos_docente_u1', label: 'Otros Recursos (U1)' },
+            { type: 'item', key: 'url_solucion_examen_u1', label: 'Solución Examen (U1)', mandatory: true },
+            { type: 'item', key: 'url_presentaciones_u1', label: 'Presentaciones (Diapositivas) (U1)', mandatory: true },
+            { type: 'item', key: 'url_guias_lab_u1', label: 'Guías de Laboratorios (U1)', mandatory: false },
+            { type: 'item', key: 'url_otros_recursos_docente_u1', label: 'Otros Recursos (U1)', mandatory: false },
             { type: 'subcategory', label: '4.3. Recursos Estudiante' },
-            { type: 'item', key: 'url_examenes_estudiante_u1', label: 'Examenes (U1)' },
-            { type: 'item', key: 'url_practicas_calificadas_u1', label: 'Practicas Calificadas (U1)' },
-            { type: 'item', key: 'url_proyecto_final_u1', label: 'Proyecto Final (U1)' },
-            { type: 'item', key: 'url_otros_recursos_estudiante_u1', label: 'Otros Recursos (U1)' },
+            { type: 'item', key: 'url_examenes_estudiante_u1', label: 'Examenes (U1)', mandatory: true },
+            { type: 'item', key: 'url_practicas_calificadas_u1', label: 'Practicas Calificadas (U1)', mandatory: false },
+            { type: 'item', key: 'url_proyecto_final_u1', label: 'Proyecto Final (U1)', mandatory: true },
+            { type: 'item', key: 'url_otros_recursos_estudiante_u1', label: 'Otros Recursos (U1)', mandatory: false },
             { type: 'category', label: '5. Unidad II' },
             { type: 'subcategory', label: '4.1. Notas Asistencia' },
-            { type: 'item', key: 'url_notas_u2', label: 'Notas (U2)' },
+            { type: 'item', key: 'url_notas_u2', label: 'Notas (U2)', mandatory: true },
             { type: 'subcategory', label: '4.2. Recursos Docente' },
-            { type: 'item', key: 'url_solucion_examen_u2', label: 'Solución Examen (U2)' },
-            { type: 'item', key: 'url_presentaciones_u2', label: 'Presentaciones (Diapositivas) (U2)' },
-            { type: 'item', key: 'url_guias_lab_u2', label: 'Guías de Laboratorios (U2)' },
-            { type: 'item', key: 'url_otros_recursos_docente_u2', label: 'Otros Recursos (U2)' },
+            { type: 'item', key: 'url_solucion_examen_u2', label: 'Solución Examen (U2)', mandatory: true },
+            { type: 'item', key: 'url_presentaciones_u2', label: 'Presentaciones (Diapositivas) (U2)', mandatory: true },
+            { type: 'item', key: 'url_guias_lab_u2', label: 'Guías de Laboratorios (U2)', mandatory: false },
+            { type: 'item', key: 'url_otros_recursos_docente_u2', label: 'Otros Recursos (U2)', mandatory: false },
             { type: 'subcategory', label: '4.3. Recursos Estudiante' },
-            { type: 'item', key: 'url_examenes_estudiante_u2', label: 'Examenes (U2)' },
-            { type: 'item', key: 'url_practicas_calificadas_u2', label: 'Practicas Calificadas (U2)' },
-            { type: 'item', key: 'url_proyecto_final_u2', label: 'Proyecto Final (U2)' },
-            { type: 'item', key: 'url_otros_recursos_estudiante_u2', label: 'Otros Recursos (U2)' },
+            { type: 'item', key: 'url_examenes_estudiante_u2', label: 'Examenes (U2)', mandatory: true },
+            { type: 'item', key: 'url_practicas_calificadas_u2', label: 'Practicas Calificadas (U2)', mandatory: false },
+            { type: 'item', key: 'url_proyecto_final_u2', label: 'Proyecto Final (U2)', mandatory: true },
+            { type: 'item', key: 'url_otros_recursos_estudiante_u2', label: 'Otros Recursos (U2)', mandatory: false },
             { type: 'category', label: '6. Unidad III' },
             { type: 'subcategory', label: '4.1. Notas Asistencia' },
-            { type: 'item', key: 'url_notas_u3', label: 'Notas (U3)' },
+            { type: 'item', key: 'url_notas_u3', label: 'Notas (U3)', mandatory: true },
             { type: 'subcategory', label: '4.2. Recursos Docente' },
-            { type: 'item', key: 'url_solucion_examen_u3', label: 'Solución Examen (U3)' },
-            { type: 'item', key: 'url_presentaciones_u3', label: 'Presentaciones (Diapositivas) (U3)' },
-            { type: 'item', key: 'url_guias_lab_u3', label: 'Guías de Laboratorios (U3)' },
-            { type: 'item', key: 'url_otros_recursos_docente_u3', label: 'Otros Recursos (U3)' },
+            { type: 'item', key: 'url_solucion_examen_u3', label: 'Solución Examen (U3)', mandatory: true },
+            { type: 'item', key: 'url_presentaciones_u3', label: 'Presentaciones (Diapositivas) (U3)', mandatory: true },
+            { type: 'item', key: 'url_guias_lab_u3', label: 'Guías de Laboratorios (U3)', mandatory: false },
+            { type: 'item', key: 'url_otros_recursos_docente_u3', label: 'Otros Recursos (U3)', mandatory: false },
             { type: 'subcategory', label: '4.3. Recursos Estudiante' },
-            { type: 'item', key: 'url_examenes_estudiante_u3', label: 'Examenes (U3)' },
-            { type: 'item', key: 'url_practicas_calificadas_u3', label: 'Practicas Calificadas (U3)' },
-            { type: 'item', key: 'url_otros_recursos_estudiante_u3', label: 'Otros Recursos' },
+            { type: 'item', key: 'url_examenes_estudiante_u3', label: 'Examenes (U3)', mandatory: true },
+            { type: 'item', key: 'url_practicas_calificadas_u3', label: 'Practicas Calificadas (U3)', mandatory: false },
+            { type: 'item', key: 'url_otros_recursos_estudiante_u3', label: 'Otros Recursos', mandatory: false },
             { type: 'project_section', label: '4.3.1. Proyecto Final (U3)'}
         ];
         
@@ -788,6 +795,7 @@
                     resizeCanvas(signatureCanvas, entrySignaturePad);
                 }, 50);
              }
+             recalculateAndValidate();
         });
 
         clearSignatureBtnPortfolio.addEventListener('click', () => {
@@ -802,6 +810,7 @@
                     resizeCanvas(signatureCanvasPortfolio, portfolioSignaturePad);
                 }, 50);
              }
+             updatePortfolioStatusIndicator();
         });
         
         clearSignatureBtnDoc.addEventListener('click', () => {
@@ -816,6 +825,7 @@
                     resizeCanvas(signatureCanvasDoc, docPortfolioSignaturePad);
                 }, 50);
              }
+             updateDocPortfolioStatusIndicator();
         });
 
         loadSemesterBtn.addEventListener('click', async () => {
@@ -925,15 +935,18 @@
         }
 
         function displayTeacherDetails(details) { 
-            teacherDetailsDiv.innerHTML = details ? `<h2>${details.NombreCompleto || ''}</h2><p><strong>Grado:</strong> ${details.GradoAcademico || 'N/A'}<span>&nbsp;&nbsp;•&nbsp;&nbsp;</span><strong>Correo:</strong> ${details.CorreoElectronico || 'N/A'}</p>` : `<p class="message">No se encontraron detalles para este docente.</p>`; 
+            teacherDetailsDiv.innerHTML = details ? `<h2>${details.NombreCompleto || ''}</h2><p><strong>Grado:</strong> ${details.GradoAcademico || 'N/A'}<span>  •  </span><strong>Correo:</strong> ${details.CorreoElectronico || 'N/A'}</p>` : `<p class="message">No se encontraron detalles para este docente.</p>`; 
         }
 
         function isEntryTestTrulyComplete(reportInfo) {
             if (!reportInfo || !reportInfo.skills || reportInfo.skills.length === 0 || !reportInfo.evaluados || reportInfo.evaluados <= 0) {
                 return false;
             }
+            if (!reportInfo.signatureImageUrl) return false;
+
             const totalEvaluados = parseInt(reportInfo.evaluados);
             for (const skill of reportInfo.skills) {
+                if (!skill.name) return false;
                 const sumaFila = (parseInt(skill.deficiente_cantidad) || 0) + 
                                  (parseInt(skill.suficiente_cantidad) || 0) + 
                                  (parseInt(skill.bueno_cantidad) || 0);
@@ -971,6 +984,31 @@
                  if (!hasCheck || !hasCant || !hasUrl) return false;
             }
             
+            if (!reportInfo.firma_url) return false;
+
+            return true;
+        }
+        
+        function isDocPortfolioComplete(reportInfo) {
+            if (!reportInfo) return false;
+
+            const mandatoryStatic = docPortfolioStructure.filter(i => i.type === 'item' && i.mandatory).map(i => i.key);
+            for(const key of mandatoryStatic) {
+                if(!reportInfo[key]) return false;
+            }
+
+            if (!reportInfo.nombres_proyectos_u3 || reportInfo.nombres_proyectos_u3.length === 0 || !reportInfo.nombres_proyectos_u3[0]) {
+                return false;
+            }
+            
+            for(let i=0; i < reportInfo.nombres_proyectos_u3.length; i++) {
+                if(!reportInfo.nombres_proyectos_u3[i] || !reportInfo.urls_documentacion_proyectos_u3[i] || !reportInfo.urls_software_proyectos_u3[i] || !reportInfo.urls_anexos_proyectos_u3[i] || !reportInfo.urls_video_proyectos_u3[i]) {
+                    return false;
+                }
+            }
+
+            if (!reportInfo.Firma_URL) return false;
+
             return true;
         }
 
@@ -1023,11 +1061,19 @@
                 } else if (selectedReportType === 'docPortfolio') {
                     const reportId = `${selectedSemester}-${course.codigo}-${course.seccion}`;
                     const docPortfolioReportInfo = existingDocPortfolioReports[reportId];
-                    if (docPortfolioReportInfo && docPortfolioReportInfo.URL_Informe) {
+                    if (docPortfolioReportInfo) {
                         card.dataset.docPortfolioReportInfo = JSON.stringify(docPortfolioReportInfo);
-                         buttonsHtml += `<button class="btn primary" data-report-type="docPortfolio">Editar Documentación</button><a href="${docPortfolioReportInfo.URL_Informe}" target="_blank" class="btn">Ver Archivo</a>`;
+                        const isComplete = isDocPortfolioComplete(docPortfolioReportInfo);
+                         if (isComplete) {
+                            buttonsHtml += `<button class="btn btn-state-completed" data-report-type="docPortfolio">Documentación Completada</button>`;
+                        } else {
+                            buttonsHtml += `<button class="btn btn-state-pending" data-report-type="docPortfolio">Documentación Pendiente</button>`;
+                        }
+                        if (docPortfolioReportInfo.URL_Informe) {
+                            buttonsHtml += `<a href="${docPortfolioReportInfo.URL_Informe}" target="_blank" class="btn">Ver Archivo</a>`;
+                        }
                     } else {
-                        buttonsHtml += `<button class="btn btn-doc-portfolio-new" data-report-type="docPortfolio">Registrar Documentación</button>`;
+                        buttonsHtml += `<button class="btn btn-state-new" data-report-type="docPortfolio">Registrar Documentación</button>`;
                     }
                 }
 
@@ -1080,6 +1126,7 @@
             setTimeout(() => {
                 entrySignaturePad = new SignaturePad(signatureCanvas, { backgroundColor: 'rgb(255, 255, 255)' });
                 resizeCanvas(signatureCanvas, entrySignaturePad);
+                entrySignaturePad.addEventListener("endStroke", () => recalculateAndValidate());
             }, 100); 
 
             skillsContainer.innerHTML = '';
@@ -1136,6 +1183,7 @@
             setTimeout(() => {
                 portfolioSignaturePad = new SignaturePad(signatureCanvasPortfolio, { backgroundColor: 'rgb(255, 255, 255)' });
                 resizeCanvas(signatureCanvasPortfolio, portfolioSignaturePad);
+                portfolioSignaturePad.addEventListener("endStroke", () => updatePortfolioStatusIndicator());
             }, 100);
 
             p_matriculados.value = isEditing ? reportInfo.matriculados : '';
@@ -1200,9 +1248,11 @@
             setTimeout(() => {
                 docPortfolioSignaturePad = new SignaturePad(signatureCanvasDoc, { backgroundColor: 'rgb(255, 255, 255)' });
                 resizeCanvas(signatureCanvasDoc, docPortfolioSignaturePad);
+                 docPortfolioSignaturePad.addEventListener("endStroke", () => updateDocPortfolioStatusIndicator());
             }, 100);
 
             buildDocPortfolioForm(reportInfo);
+            updateDocPortfolioStatusIndicator();
 
             if (isEditing && reportInfo.Firma_URL) {
                 const previewUrl = reportInfo.Firma_URL.replace("/uc?id=", "/file/d/") + "/preview";
@@ -1257,7 +1307,10 @@
             const matriculados = parseInt(matriculadosInput.value) || 0;
             const evaluados = parseInt(evaluadosInput.value) || 0;
             
-            if (skillsContainer.children.length === 0 && evaluados > 0) isReportComplete = false;
+            if (skillsContainer.children.length === 0 && evaluados > 0) { isReportComplete = false; }
+            if(existingSignatureWrapper.style.display === 'none' && (!entrySignaturePad || entrySignaturePad.isEmpty())){
+                isReportComplete = false;
+            }
 
             validationMsg.textContent = '';
             if (evaluados > matriculados && matriculados > 0) { isOverallValid = false; evaluadosInput.classList.add('input-error'); validationMsg.textContent = 'Error: Evaluados no puede superar a Matriculados.'; } 
@@ -1269,7 +1322,7 @@
                 if (!rowIsValid) isOverallValid = false;
                 inputs.forEach(input => input.classList.toggle('input-error', !rowIsValid));
                 
-                if (sumaFila !== evaluados || evaluados === 0) {
+                if (sumaFila !== evaluados || evaluados === 0 || row.querySelector('input[type="text"]').value.trim() === '') {
                     isReportComplete = false;
                 }
 
@@ -1296,7 +1349,7 @@
             saveReportBtn.disabled = !isOverallValid || evaluados === 0 || matriculados === 0 || !hasSkillName;
         }
         
-        portfolioFormContainer.addEventListener('input', () => {
+        portfolioModal.addEventListener('input', () => {
             calculatePortfolio();
             updatePortfolioStatusIndicator();
         });
@@ -1331,6 +1384,10 @@
                 if (!hasCheck || !hasCant || !hasFile) return false;
             }
             
+            if(existingSignatureWrapperPortfolio.style.display === 'none' && (!portfolioSignaturePad || portfolioSignaturePad.isEmpty())){
+                return false;
+            }
+
             return true;
         }
 
@@ -1514,9 +1571,10 @@
                 const hasUrl = !!urlValue;
                 const urlText = hasUrl ? `<a href="${urlValue}" target="_blank">Ver Evidencia</a>` : 'Ningún archivo.';
                 const filledClass = hasUrl ? 'file-name-filled' : '';
+                const mandatoryStar = item.mandatory ? `<span class="mandatory-star">*</span>` : '';
                 return `
                     <div class="doc-item">
-                        <label for="file_doc_${item.key}">${item.label}</label>
+                        <label for="file_doc_${item.key}">${item.label} ${mandatoryStar}</label>
                         <div class="file-upload-wrapper">
                             <label for="file_doc_${item.key}" class="btn file-btn">Adjuntar</label>
                             <input type="file" id="file_doc_${item.key}">
@@ -1533,11 +1591,12 @@
                 } else if (el.type === 'item') {
                     docPortfolioFormContainer.innerHTML += createItem(el);
                 } else if (el.type === 'project_section') {
-                    docPortfolioFormContainer.innerHTML += `<div class="doc-subcategory">${el.label}</div><div id="projects-container"></div>`;
+                    docPortfolioFormContainer.innerHTML += `<div class="doc-subcategory">${el.label} <span class="mandatory-star">*</span></div><div id="projects-container"></div>`;
                 }
             });
 
             docPortfolioFormContainer.innerHTML += `<div style="text-align: right; margin-top: 20px;"><button type="button" id="addProjectBtn" class="btn primary">+ Agregar Otro Proyecto</button></div>`;
+            docPortfolioFormContainer.innerHTML += `<div class="mandatory-legend"><span class="mandatory-star">*</span> Los campos marcados son obligatorios para completar el informe.</div>`;
             const projectsContainer = docPortfolioFormContainer.querySelector('#projects-container');
 
             const addProjectBlock = (projectData = {}) => {
@@ -1562,11 +1621,11 @@
                         ${projectCount > 1 ? '<button type="button" class="btn btn-remove-skill">×</button>' : ''}
                     </div>
                     <div class="project-item">
-                        <label for="p_nombre_${projectCount}">Proyecto (U3)</label>
+                        <label for="p_nombre_${projectCount}">Proyecto (U3) <span class="mandatory-star">*</span></label>
                         <input type="text" id="p_nombre_${projectCount}" value="${projectData.nombre || ''}">
                     </div>
                     <div class="project-item">
-                        <label for="file_doc_p_doc_${projectCount}">Documentación (U3)</label>
+                        <label for="file_doc_p_doc_${projectCount}">Documentación (U3) <span class="mandatory-star">*</span></label>
                         <div class="file-upload-wrapper">
                             <label for="file_doc_p_doc_${projectCount}" class="btn file-btn">Adjuntar</label>
                             <input type="file" id="file_doc_p_doc_${projectCount}">
@@ -1574,7 +1633,7 @@
                         </div>
                     </div>
                     <div class="project-item">
-                        <label for="file_doc_p_soft_${projectCount}">Software (U3)</label>
+                        <label for="file_doc_p_soft_${projectCount}">Software (U3) <span class="mandatory-star">*</span></label>
                         <div class="file-upload-wrapper">
                             <label for="file_doc_p_soft_${projectCount}" class="btn file-btn">Adjuntar</label>
                             <input type="file" id="file_doc_p_soft_${projectCount}">
@@ -1582,7 +1641,7 @@
                         </div>
                     </div>
                     <div class="project-item">
-                        <label for="file_doc_p_anexos_${projectCount}">Anexos (U3)</label>
+                        <label for="file_doc_p_anexos_${projectCount}">Anexos (U3) <span class="mandatory-star">*</span></label>
                         <div class="file-upload-wrapper">
                             <label for="file_doc_p_anexos_${projectCount}" class="btn file-btn">Adjuntar</label>
                             <input type="file" id="file_doc_p_anexos_${projectCount}">
@@ -1590,7 +1649,7 @@
                         </div>
                     </div>
                     <div class="project-item">
-                        <label for="file_doc_p_video_${projectCount}">Video (U3)</label>
+                        <label for="file_doc_p_video_${projectCount}">Video (U3) <span class="mandatory-star">*</span></label>
                         <div class="file-upload-wrapper">
                             <label for="file_doc_p_video_${projectCount}" class="btn file-btn">Adjuntar</label>
                             <input type="file" id="file_doc_p_video_${projectCount}">
@@ -1622,7 +1681,46 @@
                 if (e.target.classList.contains('btn-remove-skill')) {
                     e.target.closest('.project-block').remove();
                 }
+                updateDocPortfolioStatusIndicator();
             });
+        }
+        
+        docPortfolioModal.addEventListener('input', () => updateDocPortfolioStatusIndicator());
+
+        function updateDocPortfolioStatusIndicator(){
+            const isComplete = isDocPortfolioCompleteFromForm();
+            updateStatusIndicator(docPortfolioStatusIndicator, isComplete);
+        }
+        
+        function isDocPortfolioCompleteFromForm(){
+             const mandatoryStatic = docPortfolioStructure.filter(i => i.type === 'item' && i.mandatory).map(i => i.key);
+            for(const key of mandatoryStatic) {
+                const fileInput = document.getElementById(`file_doc_${key}`);
+                const hasFile = fileInput.files.length > 0 || docPortfolioFormContainer.querySelector(`#fname_doc_${key} a`);
+                if (!hasFile) return false;
+            }
+
+            const projectBlocks = docPortfolioFormContainer.querySelectorAll('.project-block');
+            if (projectBlocks.length === 0) return false;
+            
+            for(const block of projectBlocks) {
+                const index = block.dataset.index;
+                const nombre = document.getElementById(`p_nombre_${index}`).value.trim();
+                if(!nombre) return false;
+
+                const projectFiles = ['doc', 'soft', 'anexos', 'video'];
+                for(const fileKey of projectFiles) {
+                    const fileInput = document.getElementById(`file_doc_p_${fileKey}_${index}`);
+                    const hasFile = fileInput.files.length > 0 || docPortfolioFormContainer.querySelector(`#fname_doc_p_${fileKey}_${index} a`);
+                    if(!hasFile) return false;
+                }
+            }
+
+            if(existingSignatureWrapperDoc.style.display === 'none' && (!docPortfolioSignaturePad || docPortfolioSignaturePad.isEmpty())){
+                return false;
+            }
+            
+            return true;
         }
 
         docPortfolioFormContainer.addEventListener('change', e => {
