@@ -643,7 +643,7 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.0.0/dist/signature_pad.umd.min.js"></script>
     <script>
-        const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyN_SOOBrKFiBvOOpwdi6Y5DeCgqZ-EO1n_WFiu5DZRz6aeI8dpX1rXKLLbpmHLkZXp/exec";
+        const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxkxoYyfxi95G1LBkc8u0QTu3QpXG4QzNyBHttI3luJGwEEeSk-MyM1BLcjFRrO3OZn/exec";
         
         const semesterModal = document.getElementById('semesterModal');
         const semesterSelector = document.getElementById('semesterSelector');
@@ -1012,7 +1012,7 @@
         }
 
         function displayTeacherDetails(details) { 
-            teacherDetailsDiv.innerHTML = details ? `<h2>${details.NombreCompleto || ''}</h2><p><strong>Grado:</strong> ${details.GradoAcademico || 'N/A'}<span>  •  </span><strong>Correo:</strong> ${details.CorreoElectronico || 'N/A'}</p>` : `<p class="message">No se encontraron detalles para este docente.</p>`; 
+            teacherDetailsDiv.innerHTML = details ? `<h2>${details.NombreCompleto || ''}</h2><p><strong>Grado:</strong> ${details.GradoAcademico || 'N/A'}<span>  •  </span><strong>Correo:</strong> ${details.CorreoElectronico || 'N/A'}</p>` : `<p class="message">No se encontraron detalles para este docente.</p>`; 
         }
 
         function isEntryTestTrulyComplete(reportInfo) {
