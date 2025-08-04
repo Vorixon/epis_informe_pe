@@ -195,12 +195,33 @@
         }
         
         /* --- BOTONES DE ESTADO --- */
-        .btn-state-new { background-color: var(--orange-bg); color: var(--orange-color); border-color: var(--orange-bg); }
-        .btn-state-new:hover:not(:disabled) { background-color: #fde8d9; border-color: #fde8d9;}
-        .btn-state-pending { background-color: var(--warning-bg); color: var(--warning-color); border-color: var(--warning-bg); }
-        .btn-state-pending:hover:not(:disabled) { background-color: #fff6cf; border-color: #fff6cf;}
-        .btn-state-completed { background-color: var(--success-bg); color: var(--success-color); border-color: var(--success-bg); }
-        .btn-state-completed:hover:not(:disabled) { background-color: #e2f2ec; border-color: #e2f2ec;}
+        .btn-state-new {
+            background-color: var(--danger-bg);
+            color: var(--danger-color);
+            border-color: var(--danger-bg);
+        }
+        .btn-state-new:hover:not(:disabled) {
+            background-color: #fbe7e7;
+            border-color: #fbe7e7;
+        }
+        .btn-state-pending { 
+            background-color: var(--warning-bg); 
+            color: var(--warning-color); 
+            border-color: var(--warning-bg); 
+        }
+        .btn-state-pending:hover:not(:disabled) { 
+            background-color: #fff6cf; 
+            border-color: #fff6cf;
+        }
+        .btn-state-completed { 
+            background-color: var(--success-bg); 
+            color: var(--success-color); 
+            border-color: var(--success-bg); 
+        }
+        .btn-state-completed:hover:not(:disabled) { 
+            background-color: #e2f2ec; 
+            border-color: #e2f2ec;
+        }
 
         /* --- Controles de Modales --- */
         .modal-header { position: relative; }
@@ -263,7 +284,11 @@
         #portfolioValidationMsg { color: var(--danger-color); font-weight: 500; margin-top: 16px; text-align: center; height: 20px; font-size: 0.9em; }
         
         .material-grid {
-            display: grid; grid-template-columns: 2fr 0.5fr 0.5fr 1fr 1.5fr; gap: 12px; align-items: center; margin-top: 20px;
+            display: grid;
+            grid-template-columns: 2fr 0.5fr 0.5fr 1fr;
+            gap: 12px;
+            align-items: center;
+            margin-top: 20px;
         }
         .material-grid .grid-header { font-weight: 600; text-align: center; color: var(--text-secondary); font-size: 0.8em; text-transform: uppercase; }
         .material-grid label { font-size: 0.95em; }
@@ -286,6 +311,44 @@
         .file-name-filled { background-color: var(--success-bg); color: var(--success-color); font-weight: 600; }
         .mandatory-star { color: var(--orange-color); font-weight: 600; margin-left: 4px; }
         .mandatory-legend { font-size: 0.8em; color: var(--text-secondary); margin-top: 16px; }
+
+        .file-list-container {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+        .file-list-entry {
+            background-color: var(--surface-ground);
+            padding: 6px 10px;
+            border-radius: var(--border-radius);
+            font-size: 0.9em;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .file-list-entry.existing-file a {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 600;
+        }
+        .file-list-entry .remove-file-btn {
+            background-color: transparent;
+            border: none;
+            color: var(--danger-color);
+            cursor: pointer;
+            font-size: 1.2em;
+            line-height: 1;
+            padding: 2px 4px;
+            border-radius: 50%;
+        }
+        .multi-file-item .file-upload-wrapper { 
+            display: block; 
+        }
+        .multi-file-item .file-btn { 
+            display: inline-flex;
+            width: auto;
+        }
 
         @media (max-width: 768px) {
             body { padding: 12px; }
@@ -490,94 +553,78 @@
                     <div id="material-docente-container" class="material-grid">
                         <div class="grid-header">Material Docente</div>
                         <div class="grid-header">Dig</div><div class="grid-header">Imp</div>
-                        <div class="grid-header">Cant</div><div class="grid-header">Evidencia</div>
+                        <div class="grid-header">Cant</div>
                         
                         <label>Sílabo formato UPT <span class="mandatory-star">*</span></label>
                         <input type="checkbox" id="dig_silabo_upt"><input type="checkbox" id="imp_silabo_upt">
                         <input type="number" id="cant_silabo_upt" min="0">
-                        <div class="file-upload-wrapper"><label for="file_silabo_upt" class="btn file-btn">Adjuntar</label><input type="file" id="file_silabo_upt"><span class="file-name" id="fname_silabo_upt"></span></div>
-                        
+
                         <label>Sílabo formato ICACIT <span class="mandatory-star">*</span></label>
                         <input type="checkbox" id="dig_silabo_icacit"><input type="checkbox" id="imp_silabo_icacit">
                         <input type="number" id="cant_silabo_icacit" min="0">
-                        <div class="file-upload-wrapper"><label for="file_silabo_icacit" class="btn file-btn">Adjuntar</label><input type="file" id="file_silabo_icacit"><span class="file-name" id="fname_silabo_icacit"></span></div>
 
                         <label>Curriculum Vitae formato ICACIT <span class="mandatory-star">*</span></label>
                         <input type="checkbox" id="dig_cv_icacit"><input type="checkbox" id="imp_cv_icacit">
                         <input type="number" id="cant_cv_icacit" min="0">
-                        <div class="file-upload-wrapper"><label for="file_cv_icacit" class="btn file-btn">Adjuntar</label><input type="file" id="file_cv_icacit"><span class="file-name" id="fname_cv_icacit"></span></div>
 
                         <label>Material del Curso (Texto, Diapositivas) <span class="mandatory-star">*</span></label>
                         <input type="checkbox" id="dig_material_curso"><input type="checkbox" id="imp_material_curso">
                         <input type="number" id="cant_material_curso" min="0">
-                        <div class="file-upload-wrapper"><label for="file_material_curso" class="btn file-btn">Adjuntar</label><input type="file" id="file_material_curso"><span class="file-name" id="fname_material_curso"></span></div>
 
                         <label>Guías de laboratorio y talleres <span class="mandatory-star">*</span></label>
                         <input type="checkbox" id="dig_guias_lab"><input type="checkbox" id="imp_guias_lab">
                         <input type="number" id="cant_guias_lab" min="0">
-                        <div class="file-upload-wrapper"><label for="file_guias_lab" class="btn file-btn">Adjuntar</label><input type="file" id="file_guias_lab"><span class="file-name" id="fname_guias_lab"></span></div>
 
                         <label>Enunciado y resolución de exámenes <span class="mandatory-star">*</span></label>
                         <input type="checkbox" id="dig_examenes"><input type="checkbox" id="imp_examenes">
                         <input type="number" id="cant_examenes" min="0">
-                        <div class="file-upload-wrapper"><label for="file_examenes" class="btn file-btn">Adjuntar</label><input type="file" id="file_examenes"><span class="file-name" id="fname_examenes"></span></div>
 
                         <label>Enunciado de las practicas o casos practicos</label>
                         <input type="checkbox" id="dig_practicas"><input type="checkbox" id="imp_practicas">
                         <input type="number" id="cant_practicas" min="0">
-                        <div class="file-upload-wrapper"><label for="file_practicas" class="btn file-btn">Adjuntar</label><input type="file" id="file_practicas"><span class="file-name" id="fname_practicas"></span></div>
                         
                         <label>Registro de Asistencia <span class="mandatory-star">*</span></label>
                         <input type="checkbox" id="dig_asistencia"><input type="checkbox" id="imp_asistencia">
                         <input type="number" id="cant_asistencia" min="0">
-                        <div class="file-upload-wrapper"><label for="file_asistencia" class="btn file-btn">Adjuntar</label><input type="file" id="file_asistencia"><span class="file-name" id="fname_asistencia"></span></div>
                         
                         <label>Registro de Notas <span class="mandatory-star">*</span></label>
                         <input type="checkbox" id="dig_notas"><input type="checkbox" id="imp_notas">
                         <input type="number" id="cant_notas" min="0">
-                        <div class="file-upload-wrapper"><label for="file_notas" class="btn file-btn">Adjuntar</label><input type="file" id="file_notas"><span class="file-name" id="fname_notas"></span></div>
 
                         <label>Fichas de evaluaciones (Rúbricas)</label>
                         <input type="checkbox" id="dig_evaluaciones"><input type="checkbox" id="imp_evaluaciones">
                         <input type="number" id="cant_evaluaciones" min="0">
-                        <div class="file-upload-wrapper"><label for="file_evaluaciones" class="btn file-btn">Adjuntar</label><input type="file" id="file_evaluaciones"><span class="file-name" id="fname_evaluaciones"></span></div>
                     </div>
                     <hr>
                     <h4>II. Material generado por el estudiante</h4>
                      <div id="material-estudiante-container" class="material-grid">
                         <div class="grid-header">Material Estudiante</div>
                         <div class="grid-header">Dig</div><div class="grid-header">Imp</div>
-                        <div class="grid-header">Cant</div><div class="grid-header">Evidencia</div>
+                        <div class="grid-header">Cant</div>
 
                         <label>Copias de cuadernos o apuntes</label>
                         <input type="checkbox" id="dig_est_cuadernos"><input type="checkbox" id="imp_est_cuadernos">
                         <input type="number" id="cant_est_cuadernos" min="0">
-                        <div class="file-upload-wrapper"><label for="file_est_cuadernos" class="btn file-btn">Adjuntar</label><input type="file" id="file_est_cuadernos"><span class="file-name" id="fname_est_cuadernos"></span></div>
 
                         <label>Original de exámenes de unidad <span class="mandatory-star">*</span></label>
                         <input type="checkbox" id="dig_est_examenes"><input type="checkbox" id="imp_est_examenes">
                         <input type="number" id="cant_est_examenes" min="0">
-                        <div class="file-upload-wrapper"><label for="file_est_examenes" class="btn file-btn">Adjuntar</label><input type="file" id="file_est_examenes"><span class="file-name" id="fname_est_examenes"></span></div>
 
                         <label>Original de evaluaciones practicas</label>
                         <input type="checkbox" id="dig_est_eval_practicas"><input type="checkbox" id="imp_est_eval_practicas">
                         <input type="number" id="cant_est_eval_practicas" min="0">
-                        <div class="file-upload-wrapper"><label for="file_est_eval_practicas" class="btn file-btn">Adjuntar</label><input type="file" id="file_est_eval_practicas"><span class="file-name" id="fname_est_eval_practicas"></span></div>
 
                         <label>Original de informes de laboratorios</label>
                         <input type="checkbox" id="dig_est_inf_lab"><input type="checkbox" id="imp_est_inf_lab">
                         <input type="number" id="cant_est_inf_lab" min="0">
-                        <div class="file-upload-wrapper"><label for="file_est_inf_lab" class="btn file-btn">Adjuntar</label><input type="file" id="file_est_inf_lab"><span class="file-name" id="fname_est_inf_lab"></span></div>
 
                         <label>Trabajos encargado (investigación, etc.)</label>
                         <input type="checkbox" id="dig_est_trabajos"><input type="checkbox" id="imp_est_trabajos">
                         <input type="number" id="cant_est_trabajos" min="0">
-                        <div class="file-upload-wrapper"><label for="file_est_trabajos" class="btn file-btn">Adjuntar</label><input type="file" id="file_est_trabajos"><span class="file-name" id="fname_est_trabajos"></span></div>
 
                         <label>Trabajos y/o proyectos finales <span class="mandatory-star">*</span></label>
                         <input type="checkbox" id="dig_est_proyectos"><input type="checkbox" id="imp_est_proyectos">
                         <input type="number" id="cant_est_proyectos" min="0">
-                        <div class="file-upload-wrapper"><label for="file_est_proyectos" class="btn file-btn">Adjuntar</label><input type="file" id="file_est_proyectos"><span class="file-name" id="fname_est_proyectos"></span></div>
                     </div>
                     <hr>
                     <div class="date-group" style="margin-top: 20px;">
@@ -643,7 +690,7 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.0.0/dist/signature_pad.umd.min.js"></script>
     <script>
-        const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxkxoYyfxi95G1LBkc8u0QTu3QpXG4QzNyBHttI3luJGwEEeSk-MyM1BLcjFRrO3OZn/exec";
+        const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxvoKk0WNinFmT7QDEmZEPlBENhgQC_emZaZsgtoXyx1O8cjuWGzH7smy50XoTICf8/exec";
         
         const semesterModal = document.getElementById('semesterModal');
         const semesterSelector = document.getElementById('semesterSelector');
@@ -738,11 +785,22 @@
         let docPortfolioSignaturePad;
         let refreshOnClose = false;
         
+        let newFilesStore = {};
+
         const materialKeys = [
             'silabo_upt', 'silabo_icacit', 'cv_icacit', 'material_curso', 'guias_lab', 'examenes', 'practicas', 'asistencia', 'notas', 'evaluaciones',
             'est_cuadernos', 'est_examenes', 'est_eval_practicas', 'est_inf_lab', 'est_trabajos', 'est_proyectos'
         ];
 
+        const docPortfolioMultiFileKeys = [
+            'url_solucion_examen_u1', 'url_presentaciones_u1', 'url_guias_lab_u1', 'url_otros_recursos_docente_u1',
+            'url_examenes_estudiante_u1', 'url_practicas_calificadas_u1', 'url_proyecto_final_u1', 'url_otros_recursos_estudiante_u1',
+            'url_solucion_examen_u2', 'url_presentaciones_u2', 'url_guias_lab_u2', 'url_otros_recursos_docente_u2',
+            'url_examenes_estudiante_u2', 'url_practicas_calificadas_u2', 'url_proyecto_final_u2', 'url_otros_recursos_estudiante_u2',
+            'url_solucion_examen_u3', 'url_presentaciones_u3', 'url_guias_lab_u3', 'url_otros_recursos_docente_u3',
+            'url_examenes_estudiante_u3', 'url_practicas_calificadas_u3', 'url_otros_recursos_estudiante_u3'
+        ];
+        
         const docPortfolioStructure = [
             { type: 'category', label: '1. Información General' },
             { type: 'item', key: 'url_cv_personal', label: 'Curriculum Personal', mandatory: true },
@@ -756,6 +814,7 @@
             { type: 'category', label: '4. Unidad I' },
             { type: 'subcategory', label: '4.1. Notas Asistencia' },
             { type: 'item', key: 'url_notas_u1', label: 'Notas (U1)', mandatory: true },
+            { type: 'item', key: 'url_asistencia_u1', label: 'Asistencia (U1)', mandatory: true },
             { type: 'subcategory', label: '4.2. Recursos Docente' },
             { type: 'item', key: 'url_solucion_examen_u1', label: 'Solución Examen (U1)', mandatory: true },
             { type: 'item', key: 'url_presentaciones_u1', label: 'Presentaciones (Diapositivas) (U1)', mandatory: true },
@@ -769,6 +828,7 @@
             { type: 'category', label: '5. Unidad II' },
             { type: 'subcategory', label: '4.1. Notas Asistencia' },
             { type: 'item', key: 'url_notas_u2', label: 'Notas (U2)', mandatory: true },
+            { type: 'item', key: 'url_asistencia_u2', label: 'Asistencia (U2)', mandatory: true },
             { type: 'subcategory', label: '4.2. Recursos Docente' },
             { type: 'item', key: 'url_solucion_examen_u2', label: 'Solución Examen (U2)', mandatory: true },
             { type: 'item', key: 'url_presentaciones_u2', label: 'Presentaciones (Diapositivas) (U2)', mandatory: true },
@@ -782,6 +842,7 @@
             { type: 'category', label: '6. Unidad III' },
             { type: 'subcategory', label: '4.1. Notas Asistencia' },
             { type: 'item', key: 'url_notas_u3', label: 'Notas (U3)', mandatory: true },
+            { type: 'item', key: 'url_asistencia_u3', label: 'Asistencia (U3)', mandatory: true },
             { type: 'subcategory', label: '4.2. Recursos Docente' },
             { type: 'item', key: 'url_solucion_examen_u3', label: 'Solución Examen (U3)', mandatory: true },
             { type: 'item', key: 'url_presentaciones_u3', label: 'Presentaciones (Diapositivas) (U3)', mandatory: true },
@@ -1033,7 +1094,7 @@
             }
             return true;
         }
-
+        
         function isPortfolioTrulyComplete(reportInfo) {
             if (!reportInfo) return false;
             
@@ -1049,19 +1110,17 @@
             for (const key of docenteObligatorios) {
                 const hasCheck = reportInfo[`dig_${key}`] || reportInfo[`imp_${key}`];
                 const hasCant = (parseInt(reportInfo[`cant_${key}`]) || 0) > 0;
-                const hasUrl = !!reportInfo[`url_${key}`];
-                if (!hasCheck || !hasCant || !hasUrl) return false;
+                if (!hasCheck || !hasCant) return false;
             }
 
             const estudianteObligatorios = ['est_examenes', 'est_proyectos'];
             for (const key of estudianteObligatorios) {
                  const hasCheck = reportInfo[`dig_${key}`] || reportInfo[`imp_${key}`];
                  const hasCant = (parseInt(reportInfo[`cant_${key}`]) || 0) > 0;
-                 const hasUrl = !!reportInfo[`url_${key}`];
-                 if (!hasCheck || !hasCant || !hasUrl) return false;
+                 if (!hasCheck || !hasCant) return false;
             }
             
-            if (!reportInfo.firma_url) return false;
+            if (!reportInfo.signatureImageUrl) return false;
 
             return true;
         }
@@ -1084,7 +1143,7 @@
                 }
             }
 
-            if (!reportInfo.Firma_URL) return false;
+            if (!reportInfo.signatureImageUrl) return false;
 
             return true;
         }
@@ -1273,27 +1332,14 @@
                 const digEl = document.getElementById(`dig_${key}`);
                 const impEl = document.getElementById(`imp_${key}`);
                 const cantEl = document.getElementById(`cant_${key}`);
-                const fileInput = document.getElementById(`file_${key}`);
-                const fileNameSpan = document.getElementById(`fname_${key}`);
 
                 if(digEl) digEl.checked = isEditing && reportInfo[`dig_${key}`];
                 if(impEl) impEl.checked = isEditing && reportInfo[`imp_${key}`];
                 if(cantEl) cantEl.value = isEditing ? reportInfo[`cant_${key}`] || '' : '';
-                
-                if(fileInput) fileInput.value = '';
-                if(fileNameSpan) {
-                     if (isEditing && reportInfo[`url_${key}`]) {
-                        fileNameSpan.innerHTML = `<a href="${reportInfo[`url_${key}`]}" target="_blank">Ver Evidencia</a>`;
-                        fileNameSpan.classList.add('file-name-filled');
-                    } else {
-                        fileNameSpan.textContent = 'Ningún archivo.';
-                        fileNameSpan.classList.remove('file-name-filled');
-                    }
-                }
             });
             
-            if (isEditing && reportInfo.firma_url) {
-                const previewUrl = reportInfo.firma_url.replace("/uc?id=", "/file/d/") + "/preview";
+            if (isEditing && reportInfo.signatureImageUrl) {
+                const previewUrl = reportInfo.signatureImageUrl.replace("/uc?id=", "/file/d/") + "/preview";
                 existingSignatureIframePortfolio.src = previewUrl;
                 existingSignatureWrapperPortfolio.style.display = 'block';
                 signaturePadWrapperPortfolio.style.display = 'none';
@@ -1316,6 +1362,7 @@
         function openDocPortfolioModal(reportInfo) {
             const isEditing = !!reportInfo;
             currentReportId = isEditing ? `${selectedSemester}-${currentCourseData.codigo}-${currentCourseData.seccion}` : null;
+            newFilesStore = {}; 
             
             docPortfolioModalTitle.innerHTML = `Documentación del Portafolio
                                               <small>${currentCourseData.nombre} (${currentCourseData.seccion})<br><b>Docente:</b> ${currentTeacherData.NombreCompleto}</small>`;
@@ -1329,10 +1376,9 @@
             }, 100);
 
             buildDocPortfolioForm(reportInfo);
-            updateDocPortfolioStatusIndicator();
-
-            if (isEditing && reportInfo.Firma_URL) {
-                const previewUrl = reportInfo.Firma_URL.replace("/uc?id=", "/file/d/") + "/preview";
+            
+            if (isEditing && reportInfo.signatureImageUrl) {
+                const previewUrl = reportInfo.signatureImageUrl.replace("/uc?id=", "/file/d/") + "/preview";
                 existingSignatureIframeDoc.src = previewUrl;
                 existingSignatureWrapperDoc.style.display = 'block';
                 signaturePadWrapperDoc.style.display = 'none';
@@ -1342,6 +1388,8 @@
                 signaturePadWrapperDoc.style.display = 'block';
                 clearSignatureBtnDoc.textContent = 'Limpiar Firma';
             }
+
+            updateDocPortfolioStatusIndicator();
 
             finalResponseDocPortfolioDiv.innerHTML = '';
             saveDocPortfolioBtn.style.display = 'block';
@@ -1431,11 +1479,11 @@
         });
 
         function updatePortfolioStatusIndicator() {
-             const isComplete = checkPortfolioCompletenessFromForm();
+             const isComplete = isPortfolioCompleteFromForm();
              updateStatusIndicator(portfolioStatusIndicator, isComplete);
         }
-
-        function checkPortfolioCompletenessFromForm() {
+        
+        function isPortfolioCompleteFromForm() {
             const matriculados = parseInt(p_matriculados.value) || 0;
             const retirados = parseInt(p_retirados.value) || 0;
             const abandono = parseInt(p_abandono.value) || 0;
@@ -1448,16 +1496,14 @@
             for (const key of docenteObligatorios) {
                 const hasCheck = document.getElementById(`dig_${key}`).checked || document.getElementById(`imp_${key}`).checked;
                 const hasCant = (parseInt(document.getElementById(`cant_${key}`).value) || 0) > 0;
-                const hasFile = document.getElementById(`file_${key}`).files.length > 0 || document.getElementById(`fname_${key}`).querySelector('a');
-                if (!hasCheck || !hasCant || !hasFile) return false;
+                if (!hasCheck || !hasCant) return false;
             }
 
             const estudianteObligatorios = ['est_examenes', 'est_proyectos'];
             for (const key of estudianteObligatorios) {
                 const hasCheck = document.getElementById(`dig_${key}`).checked || document.getElementById(`imp_${key}`).checked;
                 const hasCant = (parseInt(document.getElementById(`cant_${key}`).value) || 0) > 0;
-                const hasFile = document.getElementById(`file_${key}`).files.length > 0 || document.getElementById(`fname_${key}`).querySelector('a');
-                if (!hasCheck || !hasCant || !hasFile) return false;
+                if (!hasCheck || !hasCant) return false;
             }
             
             if(existingSignatureWrapperPortfolio.style.display === 'none' && (!portfolioSignaturePad || portfolioSignaturePad.isEmpty())){
@@ -1549,9 +1595,10 @@
         savePortfolioBtn.addEventListener('click', async () => {
             savePortfolioBtn.disabled = true;
             savePortfolioBtn.innerHTML = `<div class="spinner" style="width:20px; height:20px; border-width:3px; margin:auto;"></div>`;
-            finalResponsePortfolioDiv.innerHTML = 'Procesando archivos...';
+            finalResponsePortfolioDiv.innerHTML = 'Enviando datos...';
 
             const reportInfo = existingPortfolioReports[currentReportId];
+            
             const portfolioData = {
                 uniqueId: currentReportId, semestre: selectedSemester, course: currentCourseData, docente: currentTeacherData,
                 matriculados: p_matriculados.value, retirados: p_retirados.value, abandono: p_abandono.value,
@@ -1564,44 +1611,14 @@
                 desaprobados_pct: (parseFloat(document.getElementById('p_desaprobados_span').textContent) || 0) / 100,
                 fecha_entrega: inputFechaPortfolio.value,
                 signatureBase64: (signaturePadWrapperPortfolio.style.display !== 'none' && portfolioSignaturePad && !portfolioSignaturePad.isEmpty()) ? portfolioSignaturePad.toDataURL('image/png') : null,
-                existingSignatureUrl: (reportInfo) ? reportInfo.firma_url : null,
-                files: {}
+                existingSignatureUrl: (reportInfo) ? reportInfo.signatureImageUrl : null
             };
 
             materialKeys.forEach(key => {
                 portfolioData[`dig_${key}`] = document.getElementById(`dig_${key}`).checked;
                 portfolioData[`imp_${key}`] = document.getElementById(`imp_${key}`).checked;
                 portfolioData[`cant_${key}`] = document.getElementById(`cant_${key}`).value;
-                if(reportInfo) { portfolioData[`url_${key}`] = reportInfo[`url_${key}`] || ''; }
             });
-            
-            const readFileAsBase64 = (file) => {
-                return new Promise((resolve, reject) => {
-                    const reader = new FileReader();
-                    reader.onload = () => {
-                        const base64String = reader.result.split(',')[1];
-                        resolve({ base64: base64String, name: file.name, type: file.type });
-                    };
-                    reader.onerror = error => reject(error);
-                    reader.readAsDataURL(file);
-                });
-            };
-
-            const filePromises = [];
-            materialKeys.forEach(key => {
-                const fileInput = document.getElementById(`file_${key}`);
-                if (fileInput.files[0]) {
-                    if (fileInput.files[0].size > 15 * 1024 * 1024) {
-                         Swal.fire('Archivo muy grande', `El archivo para "${key}" supera los 15MB.`, 'error');
-                         savePortfolioBtn.innerHTML = 'Guardar Datos'; savePortfolioBtn.disabled = false;
-                         throw new Error("File size exceeded");
-                    }
-                    filePromises.push(readFileAsBase64(fileInput.files[0]).then(fileData => { portfolioData.files[key] = fileData; }));
-                }
-            });
-
-            await Promise.all(filePromises);
-            finalResponsePortfolioDiv.innerHTML = 'Enviando datos...';
             
             try {
                 const response = await fetch(WEB_APP_URL, { 
@@ -1620,43 +1637,56 @@
             }
         });
         
-        portfolioFormContainer.addEventListener('change', e => {
-            if(e.target.type === 'file') {
-                const key = e.target.id.replace('file_', '');
-                const fileNameSpan = document.getElementById(`fname_${key}`);
-                if (e.target.files[0]) {
-                    fileNameSpan.textContent = e.target.files[0].name;
-                    fileNameSpan.classList.add('file-name-filled');
-                } else {
-                    const reportInfo = existingPortfolioReports[currentReportId];
-                    const originalUrl = (reportInfo && reportInfo[`url_${key}`]) ? `<a href="${reportInfo[`url_${key}`]}" target="_blank">Ver Evidencia</a>` : 'Ningún archivo.';
-                    fileNameSpan.innerHTML = originalUrl;
-                     if (!reportInfo || !reportInfo[`url_${key}`]) {
-                        fileNameSpan.classList.remove('file-name-filled');
-                    }
-                }
-            }
-        });
-
         function buildDocPortfolioForm(reportInfo) {
             docPortfolioFormContainer.innerHTML = '';
+            newFilesStore = {}; 
             let projectCount = 0;
 
             const createItem = (item) => {
-                const urlValue = (reportInfo && reportInfo[item.key]) ? reportInfo[item.key] : '';
-                const hasUrl = !!urlValue;
-                const urlText = hasUrl ? `<a href="${urlValue}" target="_blank">Ver Evidencia</a>` : 'Ningún archivo.';
-                const filledClass = hasUrl ? 'file-name-filled' : '';
-                const mandatoryStar = item.mandatory ? `<span class="mandatory-star">*</span>` : '';
-                return `
-                    <div class="doc-item">
-                        <label for="file_doc_${item.key}">${item.label} ${mandatoryStar}</label>
-                        <div class="file-upload-wrapper">
-                            <label for="file_doc_${item.key}" class="btn file-btn">Adjuntar</label>
-                            <input type="file" id="file_doc_${item.key}">
-                            <span class="file-name ${filledClass}" id="fname_doc_${item.key}">${urlText}</span>
-                        </div>
-                    </div>`;
+                if (docPortfolioMultiFileKeys.includes(item.key)) {
+                    const mandatoryStar = item.mandatory ? `<span class="mandatory-star">*</span>` : '';
+                    let existingFilesHtml = '';
+                    const urlString = (reportInfo && reportInfo[item.key]) ? reportInfo[item.key] : '';
+                    
+                    if (urlString) {
+                        const urls = urlString.split('|').filter(u => u);
+                        urls.forEach(url => {
+                            // En esta versión, no podemos saber el nombre original, así que creamos uno genérico
+                            const fileName = `Evidencia existente`;
+                            existingFilesHtml += `
+                                <div class="file-list-entry existing-file" data-url="${url}">
+                                    <a href="${url}" target="_blank">${fileName}</a>
+                                    <button type="button" class="remove-file-btn" onclick="this.parentElement.remove()">×</button>
+                                </div>`;
+                        });
+                    }
+
+                    return `
+                        <div class="doc-item multi-file-item">
+                            <label>${item.label} ${mandatoryStar}</label>
+                            <div class="file-upload-wrapper">
+                                <div id="file-list-container-${item.key}" class="file-list-container">${existingFilesHtml}</div>
+                                <label for="file_doc_${item.key}" class="btn file-btn">+ Agregar Archivo(s)</label>
+                                <input type="file" id="file_doc_${item.key}" multiple>
+                            </div>
+                        </div>`;
+                }
+                else {
+                    const urlValue = (reportInfo && reportInfo[item.key]) ? reportInfo[item.key] : '';
+                    const hasUrl = !!urlValue;
+                    const urlText = hasUrl ? `<a href="${urlValue}" target="_blank">Ver Evidencia</a>` : 'Ningún archivo.';
+                    const filledClass = hasUrl ? 'file-name-filled' : '';
+                    const mandatoryStar = item.mandatory ? `<span class="mandatory-star">*</span>` : '';
+                    return `
+                        <div class="doc-item">
+                            <label for="file_doc_${item.key}">${item.label} ${mandatoryStar}</label>
+                            <div class="file-upload-wrapper">
+                                <label for="file_doc_${item.key}" class="btn file-btn">Adjuntar</label>
+                                <input type="file" id="file_doc_${item.key}">
+                                <span class="file-name ${filledClass}" id="fname_doc_${item.key}">${urlText}</span>
+                            </div>
+                        </div>`;
+                }
             };
 
             docPortfolioStructure.forEach(el => {
@@ -1769,11 +1799,16 @@
         }
         
         function isDocPortfolioCompleteFromForm(){
-             const mandatoryStatic = docPortfolioStructure.filter(i => i.type === 'item' && i.mandatory).map(i => i.key);
+            const mandatoryStatic = docPortfolioStructure.filter(i => i.type === 'item' && i.mandatory).map(i => i.key);
             for(const key of mandatoryStatic) {
-                const fileInput = document.getElementById(`file_doc_${key}`);
-                const hasFile = fileInput.files.length > 0 || docPortfolioFormContainer.querySelector(`#fname_doc_${key} a`);
-                if (!hasFile) return false;
+                if (docPortfolioMultiFileKeys.includes(key)) {
+                    const listContainer = document.getElementById(`file-list-container-${key}`);
+                    if (!listContainer || listContainer.children.length === 0) return false;
+                } else {
+                    const fileInput = document.getElementById(`file_doc_${key}`);
+                    const hasFile = (fileInput && fileInput.files.length > 0) || docPortfolioFormContainer.querySelector(`#fname_doc_${key} a`);
+                    if (!hasFile) return false;
+                }
             }
 
             const projectBlocks = docPortfolioFormContainer.querySelectorAll('.project-block');
@@ -1801,15 +1836,44 @@
 
         docPortfolioFormContainer.addEventListener('change', e => {
             if (e.target.type === 'file') {
-                const id = e.target.id;
-                const fileNameSpan = docPortfolioFormContainer.querySelector(`#fname_${id.substring(5)}`);
-                if (fileNameSpan) {
-                    if (e.target.files[0]) {
-                        fileNameSpan.textContent = e.target.files[0].name;
-                        fileNameSpan.classList.add('file-name-filled');
-                    } else {
-                        fileNameSpan.textContent = 'Ningún archivo.';
-                        fileNameSpan.classList.remove('file-name-filled');
+                const key = e.target.id.substring(9); 
+                if (e.target.multiple) {
+                    const fileListContainer = document.getElementById(`file-list-container-${key}`);
+                    if (!newFilesStore[key]) newFilesStore[key] = [];
+
+                    for (const file of e.target.files) {
+                        const fileDiv = document.createElement('div');
+                        fileDiv.className = 'file-list-entry new-file';
+                        fileDiv.textContent = file.name;
+
+                        const fileId = `new-file-${Date.now()}-${Math.random()}`;
+                        fileDiv.dataset.fileId = fileId;
+                        newFilesStore[key].push({ id: fileId, file: file });
+
+                        const removeBtn = document.createElement('button');
+                        removeBtn.type = 'button';
+                        removeBtn.className = 'remove-file-btn';
+                        removeBtn.textContent = '×';
+                        removeBtn.onclick = () => {
+                            newFilesStore[key] = newFilesStore[key].filter(f => f.id !== fileId);
+                            fileDiv.remove();
+                        };
+
+                        fileDiv.appendChild(removeBtn);
+                        fileListContainer.appendChild(fileDiv);
+                    }
+                    e.target.value = '';
+                } 
+                else {
+                    const fileNameSpan = docPortfolioFormContainer.querySelector(`#fname_doc_${key}`);
+                    if (fileNameSpan) {
+                        if (e.target.files[0]) {
+                            fileNameSpan.textContent = e.target.files[0].name;
+                            fileNameSpan.classList.add('file-name-filled');
+                        } else {
+                            fileNameSpan.textContent = 'Ningún archivo.';
+                            fileNameSpan.classList.remove('file-name-filled');
+                        }
                     }
                 }
             }
@@ -1827,15 +1891,14 @@
                 course: currentCourseData,
                 docente: currentTeacherData,
                 signatureBase64: (signaturePadWrapperDoc.style.display !== 'none' && docPortfolioSignaturePad && !docPortfolioSignaturePad.isEmpty()) ? docPortfolioSignaturePad.toDataURL('image/png') : null,
-                existingSignatureUrl: (reportInfo) ? reportInfo.Firma_URL : null,
+                existingSignatureUrl: (reportInfo) ? reportInfo.signatureImageUrl : null,
                 files: {},
-                projects: []
+                projects: [],
+                retainedUrls: {},
+                originalUrls: {}
             };
 
             const staticKeys = docPortfolioStructure.filter(el => el.type === 'item').map(el => el.key);
-            staticKeys.forEach(key => {
-                if(reportInfo) docPortfolioData[key] = reportInfo[key] || '';
-            });
             
             const readFileAsBase64 = (file) => {
                 return new Promise((resolve, reject) => {
@@ -1850,17 +1913,36 @@
             };
 
             const filePromises = [];
+
             staticKeys.forEach(key => {
-                const fileInput = document.getElementById(`file_doc_${key}`);
-                if (fileInput && fileInput.files[0]) {
-                     if (fileInput.files[0].size > 15 * 1024 * 1024) {
-                         Swal.fire('Archivo muy grande', `El archivo para "${key}" supera los 15MB.`, 'error');
-                         saveDocPortfolioBtn.innerHTML = 'Guardar Documentación'; saveDocPortfolioBtn.disabled = false;
-                         throw new Error("File size exceeded");
+                if (docPortfolioMultiFileKeys.includes(key)) {
+                    const retainedUrlNodes = document.querySelectorAll(`#file-list-container-${key} .existing-file`);
+                    docPortfolioData.retainedUrls[key] = Array.from(retainedUrlNodes).map(node => node.dataset.url);
+                    
+                    docPortfolioData.originalUrls[key] = (reportInfo && reportInfo[key]) ? reportInfo[key] : '';
+
+                    const newFilesForKey = newFilesStore[key] || [];
+                    docPortfolioData.files[key] = [];
+                    newFilesForKey.forEach(fileObj => {
+                        filePromises.push(readFileAsBase64(fileObj.file).then(fileData => {
+                            docPortfolioData.files[key].push(fileData);
+                        }));
+                    });
+
+                } else {
+                    if (reportInfo) docPortfolioData[key] = reportInfo[key] || '';
+                    const fileInput = document.getElementById(`file_doc_${key}`);
+                    if (fileInput && fileInput.files[0]) {
+                        if (fileInput.files[0].size > 15 * 1024 * 1024) {
+                            Swal.fire('Archivo muy grande', `El archivo para "${key}" supera los 15MB.`, 'error');
+                            saveDocPortfolioBtn.innerHTML = 'Guardar Documentación';
+                            saveDocPortfolioBtn.disabled = false;
+                            throw new Error("File size exceeded");
+                        }
+                        filePromises.push(readFileAsBase64(fileInput.files[0]).then(fileData => {
+                            docPortfolioData.files[key] = fileData;
+                        }));
                     }
-                    filePromises.push(readFileAsBase64(fileInput.files[0]).then(fileData => {
-                        docPortfolioData.files[key] = fileData;
-                    }));
                 }
             });
 
